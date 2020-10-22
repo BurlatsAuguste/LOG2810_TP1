@@ -1,5 +1,6 @@
 #ifndef DEF_VEHICULE
 #define DEF_VEHICULE
+#endif
 
 #include <string>
 

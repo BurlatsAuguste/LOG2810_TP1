@@ -1,9 +1,9 @@
 #ifndef DEF_GRAPHE
 #define DEF_GRAPHE
+#endif
 
 #include <string>
 #include "Arc.h"
-#include "Sommet.h"
 #include "Vehicule.h"
 
 class Graphe
@@ -19,5 +19,5 @@ public:
     void creerGraphe(std::string file_name);
     void lireGraphe();
     Graphe extractionGraphe(Vehicule voiture);
-    void plusCourtChemin(Sommet depart, Sommet arrivee, Vehicule voiture);
+    void plusCourtChemin(Sommet *depart, Sommet *arrivee, Vehicule *voiture);
 };

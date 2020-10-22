@@ -1,5 +1,6 @@
 #ifndef DEF_SOMMET
 #define DEF_SOMMET
+#endif
 
 #include <string>
 

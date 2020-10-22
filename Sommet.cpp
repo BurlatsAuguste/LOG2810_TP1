@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Sommet::Sommet(std::string id, std::string recharge)
+Sommet::Sommet(string id, string recharge)
 {
     identifiant = id;
     type = recharge;

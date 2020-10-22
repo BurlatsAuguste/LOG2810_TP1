@@ -1,7 +1,4 @@
 #include "Graphe.h"
-#include "Sommet.h"
-#include "Arc.h"
-#include "Vehicule.h"
 using namespace std;
 
 
