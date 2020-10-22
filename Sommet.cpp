@@ -3,9 +3,6 @@
 
 using namespace std;
 
-Sommet::Sommet(string id, string recharge)
+Sommet::Sommet(string id, string recharge): identifiant(id), type(recharge), degre(0);
 {
-    identifiant = id;
-    type = recharge;
-    degre = 0;
 }
