@@ -14,4 +14,7 @@ private:
 public:
     Arc(Sommet *d, Sommet *a, int taille);
     ~Arc();
+    int getDistance();
+    Sommet* getDebut();
+    Sommet* getArrivee();
 };

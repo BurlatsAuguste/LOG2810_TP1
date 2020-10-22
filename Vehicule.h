@@ -7,7 +7,7 @@
 class Vehicule
 {
 private:
-    std::string type_carburant;
+    std::string type_carburant;//on peut faire un enum pour chaque type
     int autonomie_maximale;
     int autonomie;
 public:
