@@ -1,4 +1,7 @@
 #include "Graphe.hpp"
+#include "Arc.hpp"
+#include "Sommet.hpp"
+#include "Vehicule.hpp"
 #include <string>
 #include <iostream>
 #include <fstream>
