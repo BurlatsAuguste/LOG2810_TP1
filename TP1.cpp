@@ -78,6 +78,7 @@ Graphe *creerGraphe(string filename)
 
     Graphe *carte = new Graphe(vectorSommet, vectorArc);
     carte->updateDegre();
+    carte->updateVoisins();
 
     return carte;
 }
@@ -117,6 +118,7 @@ int main(int argc, char *argv[]){
                 carte->lireGraphe();
             case 6:
                 cout << "au revoir" << endl;
+                delete(carte);
                 exit(0);
                 break;
             default:

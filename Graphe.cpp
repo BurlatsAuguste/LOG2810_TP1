@@ -1,6 +1,7 @@
 #include "Graphe.hpp"
 #include <string>
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -17,14 +18,7 @@ void Graphe::lireGraphe()
 {
     for(int i = 0; i < int(this->listeSommet.size()); i++)
     {
-        vector<Sommet *> voisins;
-        for(int j = 0; j < int(this->listeArc.size());j++)
-        {
-            if(this->listeArc[j].getDebut()->getId() == this->listeSommet[i].getId())
-            {
-                voisins.push_back(this->listeArc[j].getArrivee());
-            }
-        }
+        vector<Sommet *> voisins = this->listeSommet[i].getVoisins();
         cout << "(" << this->listeSommet[i].getId() <<", " <<this->listeSommet[i].getType() <<", (";
         for(int j = 0; j < int(voisins.size()); j++)
         {
@@ -63,5 +57,21 @@ void Graphe::updateDegre(){
             }
         }
         this->listeSommet[i].updateDegre(degreSortant + degreEntrant);
+    }
+}
+
+void Graphe::updateVoisins(){
+    vector<Sommet *> voisins;
+    for(int i = 0; i < int(this->listeSommet.size()); i++)
+    {
+        for(int j = 0; j < int(this->listeArc.size());j++)
+        {
+            if(this->listeArc[j].getDebut()->getId() == this->listeSommet[i].getId())
+            {
+                voisins.push_back(this->listeArc[j].getArrivee());
+            }
+        }
+        this->listeSommet[i].updateVoisins(voisins);
+        voisins.clear();
     }
 }

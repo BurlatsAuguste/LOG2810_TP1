@@ -27,5 +27,6 @@ public:
     Graphe extractionGraphe(Vehicule voiture);
     void plusCourtChemin(Sommet *depart, Sommet *arrivee, Vehicule *voiture);
     void updateDegre();
+    void updateVoisins();
 };
 #endif

@@ -1,4 +1,5 @@
 #include <string>
+#include <vector>
 #include "Sommet.hpp"
 
 using namespace std;
@@ -13,13 +14,22 @@ int Sommet::getDegre(){
 }
 
 void Sommet::updateDegre(int deg){
-    degre=deg;
+    this->degre=deg;
 }
 
-std::string Sommet::getId(){
+string Sommet::getId(){
     return identifiant;
 }
 
-std::string Sommet::getType(){
+string Sommet::getType(){
     return type;
+}
+
+vector<Sommet *> Sommet::getVoisins()
+{
+    return voisins;
+}
+
+void Sommet::updateVoisins(vector<Sommet *> voisinage){
+    this->voisins = voisinage;
 }
