@@ -1,10 +1,14 @@
 #include <string>
-#include "Sommet.h"
+#include "Sommet.hpp"
 
 using namespace std;
 
 Sommet::Sommet(string id, string recharge):identifiant{id},type{recharge},degre{0}
 {
+    
+}
+
+Sommet::~Sommet(){
     
 }
 
