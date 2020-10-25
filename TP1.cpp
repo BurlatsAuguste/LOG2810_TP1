@@ -93,7 +93,8 @@ int main(int argc, char *argv[]){
                <<"2 Mettre a jour la carte"<<endl
                 <<"3 Extraire un sous-graphe"<<endl
                << "4 Determiner le plus court chemin"<<endl
-                <<"5 Quitter" <<endl;
+               << "5 Afficher carte" << endl 
+                <<"6 Quitter" <<endl; //la 5 est pas demandée dans le TP mais c'est pour tester lireGraphe
         cin >> choix_action;
         string filename;
         switch(choix_action)
@@ -113,6 +114,8 @@ int main(int argc, char *argv[]){
                 cout << "choix 4 selectionne" << endl;
                 break;
             case 5:
+                carte->lireGraphe();
+            case 6:
                 cout << "au revoir" << endl;
                 exit(0);
                 break;
