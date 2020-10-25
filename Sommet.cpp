@@ -8,16 +8,11 @@ Sommet::Sommet(string id, string recharge):identifiant{id},type{recharge},degre{
     
 }
 
-Sommet::~Sommet(){
-    
-}
-
 int Sommet::getDegre(){
     return degre;
 }
 
-void Sommet::update_degre(int deg){
-
+void Sommet::updateDegre(int deg){
     degre=deg;
 }
 

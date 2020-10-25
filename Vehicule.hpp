@@ -1,8 +1,9 @@
-#ifndef DEF_VEHICULE
-#define DEF_VEHICULE
-#endif
 
 #include <string>
+#ifndef DEF_VEHICULE
+#define DEF_VEHICULE
+
+
 
 class Vehicule
 {
@@ -16,4 +17,5 @@ public:
     void rouler(int distance_parcourue);
     void faire_plein();
 };
+#endif
 

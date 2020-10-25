@@ -1,4 +1,7 @@
 #include "Graphe.hpp"
+#include "Arc.hpp"
+#include "Sommet.hpp"
+#include "Vehicule.hpp"
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -73,7 +76,10 @@ Graphe *creerGraphe(string filename)
     getline(file, listeArc);
     vector<Arc> vectorArc = genererArcs(listeArc, vectorSommet);
 
-    return new Graphe(vectorSommet, vectorArc);
+    Graphe *carte = new Graphe(vectorSommet, vectorArc);
+    carte->updateDegre();
+
+    return carte;
 }
 
 

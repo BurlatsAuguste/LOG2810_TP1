@@ -1,9 +1,10 @@
+#include "Sommet.hpp"
+
 #ifndef DEF_ARC
 #define DEF_ARC
-#endif
 
-#include "Sommet.hpp"
-class Sommet;
+
+
 class Arc
 {
 private:
@@ -13,8 +14,8 @@ private:
 
 public:
     Arc(Sommet *d, Sommet *a, int taille);
-    ~Arc();
     int getDistance();
     Sommet* getDebut();
     Sommet* getArrivee();
 };
+#endif

@@ -1,8 +1,10 @@
+#include <string>
+
 #ifndef DEF_SOMMET
 #define DEF_SOMMET
-#endif
 
-#include <string>
+
+
 
 class Sommet
 {
@@ -13,12 +15,11 @@ private:
 
 public:
     Sommet(std::string id, std::string recharge);
-    ~Sommet();
-    void update_degre(int deg);
+    void updateDegre(int deg);
     std::string getId();
     std::string getType();
     int getDegre();
 };
-
+#endif
 
 
