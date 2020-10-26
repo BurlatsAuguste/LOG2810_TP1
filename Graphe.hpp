@@ -14,14 +14,15 @@ class Graphe
 {
 private:
 
-    std::vector<Sommet> listeSommet;
-    std::vector<Arc> listeArc;
+    std::vector<Sommet *> listeSommet;
+    std::vector<Arc *> listeArc;
     //Nous devrions créer un parametre nommé Graphe
 
 public:
-    Graphe(std::vector<Sommet> sommet,std::vector<Arc> arc);
-    std::vector<Sommet> getSommets();
-    std::vector<Arc> getArcs();
+    Graphe(std::vector<Sommet *> sommet,std::vector<Arc *> arc);
+    ~Graphe();
+    std::vector<Sommet *> getSommets();
+    std::vector<Arc *> getArcs();
     void creerGraphe(std::string filename);
     void lireGraphe();
     Graphe extractionGraphe(Vehicule voiture);

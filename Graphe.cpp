@@ -5,9 +5,21 @@
 
 using namespace std;
 
-Graphe::Graphe(vector<Sommet> sommet,vector<Arc> arc):listeSommet{sommet},listeArc{arc}
+Graphe::Graphe(vector<Sommet *> sommet,vector<Arc *> arc):listeSommet{sommet},listeArc{arc}
 {
 
+}
+
+Graphe::~Graphe()
+{
+    for(int i = 0; i < int(this->listeArc.size()); i++)
+    {
+        delete(this->listeArc[i]);
+    }
+    for(int i = 0; i < int(this->listeSommet.size()); i++)
+    {
+        delete(this->listeSommet[i]);
+    }
 }
 
 //affiche le graphe
@@ -18,8 +30,8 @@ void Graphe::lireGraphe()
 {
     for(int i = 0; i < int(this->listeSommet.size()); i++)
     {
-        vector<Sommet *> voisins = this->listeSommet[i].getVoisins();
-        cout << "(" << this->listeSommet[i].getId() <<", " <<this->listeSommet[i].getType() <<", (";
+        vector<Sommet *> voisins = this->listeSommet[i]->getVoisins();
+        cout << "(" << this->listeSommet[i]->getId() <<", " <<this->listeSommet[i]->getType() <<", (";
         for(int j = 0; j < int(voisins.size()); j++)
         {
             cout << voisins[j]->getId() <<", ";
@@ -29,12 +41,12 @@ void Graphe::lireGraphe()
     }
 }
 
-vector<Sommet> Graphe::getSommets()
+vector<Sommet *> Graphe::getSommets()
 {
     return this->listeSommet;
 }
 
-vector<Arc> Graphe::getArcs()
+vector<Arc *> Graphe::getArcs()
 {
     return this->listeArc;
 }
@@ -49,14 +61,14 @@ void Graphe::updateDegre(){
 
         for(int j = 0; j < int(this->listeArc.size()); j++)
         {
-            if(this->listeArc[j].getDebut()->getId() == this->listeSommet[i].getId()){
+            if(this->listeArc[j]->getDebut()->getId() == this->listeSommet[i]->getId()){
                 degreEntrant++;
             }
-            if(this->listeArc[j].getArrivee()->getId() == this->listeSommet[i].getId()){
+            if(this->listeArc[j]->getArrivee()->getId() == this->listeSommet[i]->getId()){
                 degreSortant++;
             }
         }
-        this->listeSommet[i].updateDegre(degreSortant + degreEntrant);
+        this->listeSommet[i]->updateDegre(degreSortant + degreEntrant);
     }
 }
 
@@ -66,12 +78,12 @@ void Graphe::updateVoisins(){
     {
         for(int j = 0; j < int(this->listeArc.size());j++)
         {
-            if(this->listeArc[j].getDebut()->getId() == this->listeSommet[i].getId())
+            if(this->listeArc[j]->getDebut()->getId() == this->listeSommet[i]->getId())
             {
-                voisins.push_back(this->listeArc[j].getArrivee());
+                voisins.push_back(this->listeArc[j]->getArrivee());
             }
         }
-        this->listeSommet[i].updateVoisins(voisins);
+        this->listeSommet[i]->updateVoisins(voisins);
         voisins.clear();
     }
 }

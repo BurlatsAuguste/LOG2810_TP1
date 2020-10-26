@@ -9,8 +9,8 @@
 using namespace std;
 
 //fonction pour générer les sommets
-vector<Sommet> genererSommets(string listeSommet){
-    vector<Sommet> vectorSommet;
+vector<Sommet *> genererSommets(string listeSommet){
+    vector<Sommet *> vectorSommet;
     string delimiter = ";";
     size_t pos;
     string token;
@@ -19,23 +19,23 @@ vector<Sommet> genererSommets(string listeSommet){
         token = listeSommet.substr(0, pos);
         listeSommet.erase(0, pos + delimiter.length());
         Sommet *s = new Sommet(token.substr(0, token.find(',')), token.substr(token.find(',')+1,string::npos));
-        vectorSommet.push_back(*s);
+        vectorSommet.push_back(s);
     }
     return vectorSommet;
 }
 
 //fonction servant à retrouver un sommet dans un vecteur à l'aide de son id
-Sommet *trouverSommet(string id, vector<Sommet> vectorSommet){
+Sommet *trouverSommet(string id, vector<Sommet *> vectorSommet){
     for(int i = 0; i<int(vectorSommet.size());i++){
-        if(vectorSommet[i].getId() == id){
-            return &vectorSommet[i];
+        if(vectorSommet[i]->getId() == id){
+            return vectorSommet[i];
         }
     }
 }
 
 //fonction pour générer les arcs
-vector<Arc> genererArcs(string listeArc, vector<Sommet> vectorSommet){
-    vector<Arc> vectorArc;
+vector<Arc *> genererArcs(string listeArc, vector<Sommet *> vectorSommet){
+    vector<Arc *> vectorArc;
     string delimiter = ";";
     size_t pos;
     string token;
@@ -56,7 +56,7 @@ vector<Arc> genererArcs(string listeArc, vector<Sommet> vectorSommet){
         distance = stoi(token);
 
         Arc *a = new Arc(depart, arrivee, distance);
-        vectorArc.push_back(*a);
+        vectorArc.push_back(a);
     }
     return vectorArc;
 }
@@ -70,11 +70,11 @@ Graphe *creerGraphe(string filename)
 
     //on génère les sommets à l'aide de la première ligne du fichier
     getline(file, listeSommet);
-    vector<Sommet> vectorSommet = genererSommets(listeSommet);
+    vector<Sommet *> vectorSommet = genererSommets(listeSommet);
 
     //on génère les arcs à l'aide de la seconde ligne du fichier
     getline(file, listeArc);
-    vector<Arc> vectorArc = genererArcs(listeArc, vectorSommet);
+    vector<Arc *> vectorArc = genererArcs(listeArc, vectorSommet);
 
     Graphe *carte = new Graphe(vectorSommet, vectorArc);
     carte->updateDegre();
@@ -122,6 +122,7 @@ int main(int argc, char *argv[]){
                 break;
             case 5:
                 carte->lireGraphe();
+                break;
             case 6:
                 cout << "au revoir" << endl;
                 delete(carte);
