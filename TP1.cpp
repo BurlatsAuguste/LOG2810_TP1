@@ -86,6 +86,7 @@ Graphe *creerGraphe(string filename)
 int main(int argc, char *argv[]){
     int choix_action;
     Graphe *carte;
+    bool executeA = false;
     while(true)
     {
         cout << "Que souhaitez-vous faire ?" << endl
@@ -101,6 +102,7 @@ int main(int argc, char *argv[]){
         {
             case 1:
                 cout << "choix 1 selectionne" << endl;
+                executeA = true;
                 break;
             case 2:
                 cout << "Veuillez entrer le chemin vers le fichier" << endl;
@@ -109,6 +111,10 @@ int main(int argc, char *argv[]){
                 break;
             case 3:
                 cout << "choix 3 selectionne" << endl;
+                if(!executeA)
+                {
+                    //message d'erreur
+                }
                 break;
             case 4:
                 cout << "choix 4 selectionne" << endl;
