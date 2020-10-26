@@ -23,6 +23,7 @@ public:
     std::vector<Sommet *> getVoisins();
     int getDegre();
     void updateVoisins(std::vector<Sommet *> voisinage);
+    void addVoisin(Sommet * sommet);
 };
 #endif
 
