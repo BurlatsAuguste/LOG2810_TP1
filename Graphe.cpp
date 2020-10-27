@@ -38,7 +38,7 @@ void Graphe::lireGraphe()
 		for (int j = 0; j < int(listeSommet.size()); j++)
         {
 
-            if (matriceAdj[i][j] != 0)
+            if (matriceAdj[i][j] != 0 || matriceAdj[j][i] != 0)
             {
                 cout << listeSommet[j]->getId() <<", ";
 			}
