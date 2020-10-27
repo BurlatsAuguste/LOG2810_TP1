@@ -3,24 +3,33 @@
 
 using namespace std;
 
-Vehicule::Vehicule(std::string carbu, int autonomie_max, int autonomie_depart, int taux)
+Vehicule::Vehicule()
 {
-	this->taux = taux;
-	type_carburant = carbu;
-    autonomie_maximale = autonomie_max;
-    autonomie = autonomie_depart;
+
+}
+Vehicule::Vehicule(std::string carbu, int autonomie, int coeff):typeCarburant{carbu}, consommation{coeff}, autonomieRestante{autonomie}, autonomieMax{autonomie}
+{
 }
 
-void Vehicule::rouler(int distance_parcourue)
+void Vehicule::rouler(int distanceParcourue)
 {
-    autonomie = autonomie-distance_parcourue*taux;
+    autonomieRestante = autonomieRestante - distanceParcourue*consommation;
 }
 
 void Vehicule::faire_plein()
 {
-    autonomie = autonomie_maximale;
+    autonomieRestante = 100;
 }
 
 int Vehicule::getAutonomie() {
-    return autonomie;
+    return autonomieRestante;
+}
+
+int Vehicule::getAutonomieMax() {
+    return autonomieMax;
+}
+
+int Vehicule::getConso()
+{
+    return consommation;
 }

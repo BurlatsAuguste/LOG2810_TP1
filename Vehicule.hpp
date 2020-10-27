@@ -8,17 +8,19 @@
 class Vehicule
 {
 private:
-    std::string type_carburant;//on peut faire un enum pour chaque type
-    int autonomie_maximale;
-    int autonomie;
-	int taux;
+    std::string typeCarburant;//on peut faire un enum pour chaque type
+    int autonomieMax;
+    int autonomieRestante;
+    int consommation;
 
 public:
-    Vehicule(std::string carbu, int autonomie_max, int autonomie_depart, int taux);
-    ~Vehicule();
-    void rouler(int distance_parcourue);
+    Vehicule();
+    Vehicule(std::string carbu, int autonomie, int coeff);
+    void rouler(int distanceParcourue);
     void faire_plein();
     int getAutonomie();
+    int getAutonomieMax();
+    int getConso();
 };
 #endif
 

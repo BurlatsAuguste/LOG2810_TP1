@@ -118,11 +118,6 @@ void Graphe::ajouterArc(string id1, string id2, int distance)
 }
 
 
-
-
-
-
-
 bool contains(vector<Sommet*> v, int i)
 {
     for (Sommet* s : v)
@@ -133,7 +128,7 @@ bool contains(vector<Sommet*> v, int i)
     return false;
 }
 
-vector<int> Graphe::plusLong(set<Sommet*>& visites, Sommet* depart, int restant)
+vector<int> Graphe::plusLong(set<Sommet*> visites, Sommet* depart, int restant, int consommation)
 {
     int i = depart->getIndice();
 
@@ -144,11 +139,11 @@ vector<int> Graphe::plusLong(set<Sommet*>& visites, Sommet* depart, int restant)
 
     for (int arc = 0; arc < listeSommet.size(); arc++)
     {
-        if (matriceAdj[i][arc] != 0 && matriceAdj[i][arc]<=restant && visites.count(listeSommet[arc]) == 0)
+        if (matriceAdj[i][arc] != 0 && matriceAdj[i][arc]*consommation<=restant && visites.count(listeSommet[arc]) == 0)
         {
             set<Sommet*> copie = visites;
             copie.insert(listeSommet[arc]);
-            vector<int> chemin = plusLong(copie, listeSommet[arc], restant - matriceAdj[i][arc]);
+            vector<int> chemin = plusLong(copie, listeSommet[arc], restant - matriceAdj[i][arc]*consommation, consommation);
             int distance = chemin[0]+matriceAdj[i][arc];
             if (distance > max)
             {
@@ -168,7 +163,8 @@ vector<int> Graphe::plusLong(set<Sommet*>& visites, Sommet* depart, int restant)
 Graphe Graphe::extractionGraphe(Vehicule v, Sommet* depart)
 {
     set<Sommet*> visites;
-    vector<int> trajet = plusLong(visites, depart, v.getAutonomie());
+    visites.insert(depart);
+    vector<int> trajet = plusLong(visites, depart, v.getAutonomieMax(), v.getConso());
 
     int distance = trajet[0];
 

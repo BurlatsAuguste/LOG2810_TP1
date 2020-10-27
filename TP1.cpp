@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <set>
 using namespace std;
 
 //fonction pour générer les sommets
@@ -45,16 +46,52 @@ Graphe *creerGraphe(string filename)
     return carte;
 }
 
-Vehicule *initialiserVehicule()
+Vehicule initialiserVehicule()
 {
+    string typeCarburant;
+    while(true)
+    {
+        cout << "Veuillez indiquer le type de carburant : electrique, essence ou hybrid" << endl;
+        cin >> typeCarburant;
+        if(typeCarburant == "electrique" || typeCarburant == "essence" || typeCarburant == "hybrid")
+        {
+            break;
+        }
+        else
+        {
+            cout << "Carburant saisi non valide" << endl;
+        }
+    }
 
+    int autonomie;
+    cout << "Veuillez indiquer l'autonomie maximale du véhicule" << endl;
+    cin >> autonomie;
+
+    int consommation;
+    cout << "Veuillez indiquer la consommation au kilomètre du véhicule" << endl;
+    cin >> consommation;
+    
+    Vehicule voiture = Vehicule(typeCarburant, autonomie, consommation);
+    return voiture;
+}
+
+void afficherCheminPlusLong(Graphe *carte, Vehicule voiture)
+{
+    string depart;
+    cout << "Veuillez indiquer un point de départ" << endl;
+    cin >> depart;
+    Sommet *sommetDepart = carte->trouverSommet(depart);
+    Graphe plusLong = carte->extractionGraphe(voiture, sommetDepart);
+    //plusLong.lireGraphe();
 }
 
 
 int main(int argc, char *argv[]){
     int choix_action;
     Graphe *carte;
+    Vehicule voiture;
     bool executeA = false;
+    bool executeB = false;
     while(true)
     {
         cout << "Que souhaitez-vous faire ?" << endl
@@ -71,14 +108,17 @@ int main(int argc, char *argv[]){
             case 1:
                 cout << "choix 1 selectionne" << endl;
                 executeA = true;
+                voiture = initialiserVehicule();
                 break;
             case 2:
                 cout << "Veuillez entrer le chemin vers le fichier" << endl;
                 cin >> filename;
                 carte = creerGraphe(filename);
+                executeB = true;
                 break;
             case 3:
                 cout << "choix 3 selectionne" << endl;
+                afficherCheminPlusLong(carte, voiture);
                 if(!executeA)
                 {
                     //message d'erreur

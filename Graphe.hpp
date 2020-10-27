@@ -23,14 +23,14 @@ public:
     std::vector<Sommet *> getSommets();
     
     void genererMatrice(std::string listeArc);
-    Sommet *trouverSommet(std::string id); 
+    Sommet *trouverSommet(std::string id);
     void lireGraphe();
 
     void ajouterSommet(Sommet* sommet);
     void ajouterArc(int i, int j, int distance);
     void ajouterArc(std::string id1, std::string id2, int distance);
 
-    std::vector<int> plusLong(std::set<Sommet*>& visites, Sommet* depart, int restant);
+    std::vector<int> plusLong(std::set<Sommet*> visites, Sommet* depart, int restant, int consommation);
 
     Graphe extractionGraphe(Vehicule voiture, Sommet* depart);
     void plusCourtChemin(std::string depart, std::string arrivee, Vehicule *voiture);
