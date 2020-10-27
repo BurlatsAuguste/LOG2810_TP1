@@ -1,5 +1,7 @@
 #include <string>
 #include <vector>
+#include <set>
+#include <list>
 #include "Sommet.hpp"
 #include "Vehicule.hpp"
 
@@ -16,13 +18,21 @@ private:
 
 public:
     Graphe(std::vector<Sommet *> sommet);
+    Graphe();
     ~Graphe();
     std::vector<Sommet *> getSommets();
     
     void genererMatrice(std::string listeArc);
     Sommet *trouverSommet(std::string id); 
     void lireGraphe();
-    Graphe extractionGraphe(Vehicule voiture);
+
+    void ajouterSommet(Sommet* sommet);
+    void ajouterArc(int i, int j, int distance);
+    void ajouterArc(std::string id1, std::string id2, int distance);
+
+    std::vector<int> plusLong(std::set<Sommet*>& visites, Sommet* depart, int restant);
+
+    Graphe extractionGraphe(Vehicule voiture, Sommet* depart);
     void plusCourtChemin(std::string depart, std::string arrivee, Vehicule *voiture);
 };
 #endif

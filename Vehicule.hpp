@@ -18,6 +18,7 @@ public:
     ~Vehicule();
     void rouler(int distance_parcourue);
     void faire_plein();
+    int getAutonomie();
 };
 #endif
 
