@@ -20,3 +20,7 @@ void Vehicule::faire_plein()
 {
     autonomie = autonomie_maximale;
 }
+
+int Vehicule::getAutonomie() {
+    return autonomie;
+}
