@@ -82,7 +82,7 @@ void afficherCheminPlusLong(Graphe *carte, Vehicule voiture)
     cin >> depart;
     Sommet *sommetDepart = carte->trouverSommet(depart);
     Graphe plusLong = carte->extractionGraphe(voiture, sommetDepart);
-    //plusLong.lireGraphe();
+    plusLong.lireGraphe();
 }
 
 

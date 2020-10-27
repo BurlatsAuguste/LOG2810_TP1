@@ -93,11 +93,12 @@ void Graphe::genererMatrice(string listeArc){
 
 void Graphe::ajouterSommet(Sommet* sommet)
 {
-    int i = listeSommet.size();
+    int i = int(listeSommet.size());
     Sommet* nouveau = new Sommet(sommet->getId(), sommet->getType(), i);
+    listeSommet.push_back(nouveau);
     matriceAdj.push_back(vector<int>());
     matriceAdj[i].push_back(0);
-    for (int j = 0; j < listeSommet.size(); j++)
+    for (int j = 0; j < int(listeSommet.size()); j++)
     {
         matriceAdj[j].push_back(0);
         matriceAdj[i].push_back(0);
@@ -137,7 +138,7 @@ vector<int> Graphe::plusLong(set<Sommet*> visites, Sommet* depart, int restant, 
     bool end = true;
 
 
-    for (int arc = 0; arc < listeSommet.size(); arc++)
+    for (int arc = 0; arc < int(listeSommet.size()); arc++)
     {
         if (matriceAdj[i][arc] != 0 && matriceAdj[i][arc]*consommation<=restant && visites.count(listeSommet[arc]) == 0)
         {
@@ -175,7 +176,7 @@ Graphe Graphe::extractionGraphe(Vehicule v, Sommet* depart)
         nouveau.ajouterSommet(listeSommet[trajet[i]]);
         if (i - 1 >= 1)
         {
-            nouveau.ajouterArc(trajet.size() - 1 - i, trajet.size() - i, matriceAdj[trajet[i]][trajet[i - 1]]);
+            nouveau.ajouterArc(int(trajet.size()) - 1 - i, int(trajet.size()) - i, matriceAdj[trajet[i]][trajet[i - 1]]);
         }
     }
 
