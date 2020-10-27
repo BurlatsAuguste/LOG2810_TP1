@@ -1,5 +1,4 @@
 #include "Graphe.hpp"
-#include "Arc.hpp"
 #include "Sommet.hpp"
 #include "Vehicule.hpp"
 #include <string>
@@ -14,51 +13,15 @@ vector<Sommet *> genererSommets(string listeSommet){
     string delimiter = ";";
     size_t pos;
     string token;
+    int i = 0;
     //on découpe la string au niveau des ; et on génère un sommet avec chaque morceau
     while((pos = listeSommet.find(delimiter)) != string::npos){
         token = listeSommet.substr(0, pos);
         listeSommet.erase(0, pos + delimiter.length());
-        Sommet *s = new Sommet(token.substr(0, token.find(',')), token.substr(token.find(',')+1,string::npos));
+        Sommet *s = new Sommet(token.substr(0, token.find(',')), token.substr(token.find(',')+1,string::npos), i++);
         vectorSommet.push_back(s);
     }
     return vectorSommet;
-}
-
-//fonction servant à retrouver un sommet dans un vecteur à l'aide de son id
-Sommet *trouverSommet(string id, vector<Sommet *> vectorSommet){
-    for(int i = 0; i<int(vectorSommet.size());i++){
-        if(vectorSommet[i]->getId() == id){
-            return vectorSommet[i];
-        }
-    }
-}
-
-//fonction pour générer les arcs
-vector<Arc *> genererArcs(string listeArc, vector<Sommet *> vectorSommet){
-    vector<Arc *> vectorArc;
-    string delimiter = ";";
-    size_t pos;
-    string token;
-    Sommet *depart;
-    Sommet * arrivee;
-    int distance;
-    //on découpe la string au niveau des ; et on génere un arc à l'aide de chaque morceau
-    while((pos = listeArc.find(delimiter)) != string::npos){
-        token = listeArc.substr(0, pos);
-        listeArc.erase(0, pos + delimiter.length());
-
-        depart = trouverSommet(token.substr(0, token.find(',')), vectorSommet);
-        token.erase(0, token.find(',')+1);
-
-        arrivee = trouverSommet(token.substr(0, token.find(',')), vectorSommet);
-        token.erase(0, token.find(',')+1);
-
-        distance = stoi(token);
-
-        Arc *a = new Arc(depart, arrivee, distance);
-        vectorArc.push_back(a);
-    }
-    return vectorArc;
 }
 
 //fonction pour générer un graphe
@@ -74,13 +37,17 @@ Graphe *creerGraphe(string filename)
 
     //on génère les arcs à l'aide de la seconde ligne du fichier
     getline(file, listeArc);
-    vector<Arc *> vectorArc = genererArcs(listeArc, vectorSommet);
+    //vector<Arc *> vectorArc = genererArcs(listeArc, vectorSommet);
 
-    Graphe *carte = new Graphe(vectorSommet, vectorArc);
-    carte->updateDegre();
-    carte->updateVoisins();
+    Graphe *carte = new Graphe(vectorSommet);
+    carte->genererMatrice(listeArc);
 
     return carte;
+}
+
+Vehicule *initialiserVehicule()
+{
+
 }
 
 
@@ -91,10 +58,10 @@ int main(int argc, char *argv[]){
     while(true)
     {
         cout << "Que souhaitez-vous faire ?" << endl
-               << "1 Demander les caracteristiques du vehicule"<<endl
-               <<"2 Mettre a jour la carte"<<endl
-                <<"3 Extraire un sous-graphe"<<endl
-               << "4 Determiner le plus court chemin"<<endl
+               << "1 Demander les caracteristiques du vehicule"<< endl
+               <<"2 Mettre a jour la carte"<< endl
+                <<"3 Extraire un sous-graphe"<< endl
+               << "4 Determiner le plus court chemin"<< endl
                << "5 Afficher carte" << endl 
                 <<"6 Quitter" <<endl; //la 5 est pas demandée dans le TP mais c'est pour tester lireGraphe
         cin >> choix_action;

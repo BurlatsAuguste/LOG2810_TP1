@@ -4,18 +4,11 @@
 
 using namespace std;
 
-Sommet::Sommet(string id, string recharge):identifiant{id},type{recharge},degre{0}
+Sommet::Sommet(string id, string recharge, int indi):identifiant{id},type{recharge},indice{indi}
 {
     
 }
 
-int Sommet::getDegre(){
-    return degre;
-}
-
-void Sommet::updateDegre(int deg){
-    this->degre=deg;
-}
 
 string Sommet::getId(){
     return identifiant;
@@ -25,11 +18,7 @@ string Sommet::getType(){
     return type;
 }
 
-vector<Sommet *> Sommet::getVoisins()
+int Sommet::getIndice()
 {
-    return voisins;
-}
-
-void Sommet::updateVoisins(vector<Sommet *> voisinage){
-    this->voisins = voisinage;
+    return indice;
 }

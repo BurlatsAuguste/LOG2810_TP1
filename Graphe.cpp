@@ -5,20 +5,24 @@
 
 using namespace std;
 
-Graphe::Graphe(vector<Sommet *> sommet,vector<Arc *> arc):listeSommet{sommet},listeArc{arc}
+Graphe::Graphe(vector<Sommet *> sommet):listeSommet{sommet}
 {
-
+	int size = sommet.size();
+	for (int i = 0; i < size; i++)
+    {
+		matriceAdj.push_back(vector<int>());
+		for (int j = 0; j < size; j++)
+        {
+			matriceAdj[i].push_back(0);
+		}
+	}
 }
 
 Graphe::~Graphe()
 {
-    for(int i = 0; i < int(this->listeArc.size()); i++)
+    for(int i = 0; i < int(listeSommet.size()); i++)
     {
-        delete(this->listeArc[i]);
-    }
-    for(int i = 0; i < int(this->listeSommet.size()); i++)
-    {
-        delete(this->listeSommet[i]);
+        delete(listeSommet[i]);
     }
 }
 
@@ -28,62 +32,56 @@ Graphe::~Graphe()
 //ceux qui permettent de rejoindre le noeud ne sont pas considérés comme voisins
 void Graphe::lireGraphe()
 {
-    for(int i = 0; i < int(this->listeSommet.size()); i++)
+    for(int i = 0; i < int(listeSommet.size()); i++)
     {
-        vector<Sommet *> voisins = this->listeSommet[i]->getVoisins();
-        cout << "(" << this->listeSommet[i]->getId() <<", " <<this->listeSommet[i]->getType() <<", (";
-        for(int j = 0; j < int(voisins.size()); j++)
+        cout << "(" << listeSommet[i]->getId() <<", " <<listeSommet[i]->getType() <<", (";
+		for (int j = 0; j < int(listeSommet.size()); j++)
         {
-            cout << voisins[j]->getId() <<", ";
+
+            if (matriceAdj[i][j] != 0)
+            {
+                cout << listeSommet[j]->getId() <<", ";
+			}
+
         }
         cout << ")" <<endl;
-        voisins.clear();
     }
 }
 
 vector<Sommet *> Graphe::getSommets()
 {
-    return this->listeSommet;
+    return listeSommet;
 }
 
-vector<Arc *> Graphe::getArcs()
-{
-    return this->listeArc;
-}
-
-void Graphe::updateDegre(){
-    int degreEntrant;
-    int degreSortant;
-    for(int i = 0; i < int(this->listeSommet.size()); i++)
-    {
-        degreEntrant = 0;
-        degreSortant = 0;
-
-        for(int j = 0; j < int(this->listeArc.size()); j++)
-        {
-            if(this->listeArc[j]->getDebut()->getId() == this->listeSommet[i]->getId()){
-                degreEntrant++;
-            }
-            if(this->listeArc[j]->getArrivee()->getId() == this->listeSommet[i]->getId()){
-                degreSortant++;
-            }
+Sommet *Graphe::trouverSommet(string id){
+    for(int i = 0; i<int(listeSommet.size());i++){
+        if(listeSommet[i]->getId() == id){
+            return listeSommet[i];
         }
-        this->listeSommet[i]->updateDegre(degreSortant + degreEntrant);
     }
+    return nullptr;
 }
 
-void Graphe::updateVoisins(){
-    vector<Sommet *> voisins;
-    for(int i = 0; i < int(this->listeSommet.size()); i++)
-    {
-        for(int j = 0; j < int(this->listeArc.size());j++)
-        {
-            if(this->listeArc[j]->getDebut()->getId() == this->listeSommet[i]->getId())
-            {
-                voisins.push_back(this->listeArc[j]->getArrivee());
-            }
-        }
-        this->listeSommet[i]->updateVoisins(voisins);
-        voisins.clear();
+void Graphe::genererMatrice(std::string listeArc){
+    string delimiter = ";";
+    size_t pos;
+    string token;
+    Sommet *depart;
+    Sommet * arrivee;
+    int distance;
+    //on découpe la string au niveau des ; et on génere un arc à l'aide de chaque morceau
+    while((pos = listeArc.find(delimiter)) != string::npos){
+        token = listeArc.substr(0, pos);
+        listeArc.erase(0, pos + delimiter.length());
+
+        depart = trouverSommet(token.substr(0, token.find(',')));
+        token.erase(0, token.find(',')+1);
+
+        arrivee = trouverSommet(token.substr(0, token.find(',')));
+        token.erase(0, token.find(',')+1);
+
+        distance = stoi(token);
+        matriceAdj[depart->getIndice()][arrivee->getIndice()] = distance;
     }
+
 }

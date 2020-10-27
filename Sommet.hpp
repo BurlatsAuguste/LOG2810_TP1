@@ -12,17 +12,15 @@ class Sommet
 private:
     std::string identifiant;
     std::string type;
-    std::vector<Sommet *> voisins;
-    int degre;
+    int indice;
 
 public:
-    Sommet(std::string id, std::string recharge);
-    void updateDegre(int deg);
+    Sommet(std::string id, std::string recharge, int indi);
+    //void updateDegre(int deg);
     std::string getId();
     std::string getType();
-    std::vector<Sommet *> getVoisins();
-    int getDegre();
-    void updateVoisins(std::vector<Sommet *> voisinage);
+    int getIndice();
+    //int getDegre();
 };
 #endif
 
