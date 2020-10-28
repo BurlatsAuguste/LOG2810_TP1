@@ -32,7 +32,8 @@ public:
 
     std::vector<int> plusLong(std::set<Sommet*> visites, Sommet* depart, int restant, int consommation);
 
+    int autonomieRestante(Vehicule voiture, std::vector<Sommet *> chemin);
     Graphe extractionGraphe(Vehicule voiture, Sommet* depart);
-    void plusCourtChemin(std::string depart, std::string arrivee, Vehicule *voiture);
+    void plusCourtChemin(Sommet *depart, Sommet *arrivee, Vehicule *voiture);
 };
 #endif

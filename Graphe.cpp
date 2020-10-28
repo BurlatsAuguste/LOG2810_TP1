@@ -4,6 +4,7 @@
 #include <vector>
 #include <set>
 #include <list>
+#include <limits>
 
 using namespace std;
 
@@ -184,5 +185,56 @@ Graphe Graphe::extractionGraphe(Vehicule v, Sommet* depart)
     }
 
     return nouveau;
+
+}
+
+int Graphe::autonomieRestante(Vehicule voiture, vector<Sommet *> chemin)
+{
+    for(int i = 0; i < int(chemin.size())-1; i++)
+    {
+        voiture.fairePlein(chemin[i]->getType()); //le test de compatibilité se fait dans la fct faire_plein
+        voiture.rouler(matriceAdj[chemin[i]->getIndice()][chemin[i+1]->getIndice()]);
+    }
+    return voiture.getAutonomie();
+}
+
+void Graphe::plusCourtChemin(Sommet *depart, Sommet *arrivee, Vehicule *voiture)
+{
+    vector<int> distances;
+    set<Sommet *> explores;
+    explores.insert(depart);
+    vector<vector<Sommet *>> chemins;
+    for(int i = 0; i < int(listeSommet.size()); i++)
+    {
+        if(i == depart->getIndice())
+            distances.push_back(0);
+        else
+            distances.push_back(INT_MAX);
+    }
+
+    int distanceMin;
+    Sommet *aExplorer;
+    while (explores.size() < listeSommet.size())
+    {
+        distanceMin = INT_MAX;
+        for(int i = 0; i < int(listeSommet.size()); i++)
+        {
+            if(matriceAdj[depart->getIndice()][i] != 0 && matriceAdj[depart->getIndice()][i] < distanceMin && explores.count(listeSommet[i]) == 0 && autonomieRestante(*voiture, chemins[i]) >= matriceAdj[depart->getIndice()][i]*voiture->getConso())
+            {
+                distanceMin = matriceAdj[depart->getIndice()][i];
+                aExplorer = listeSommet[i];
+            }
+        }
+        explores.insert(aExplorer);
+        for(int i = 0; i < int(listeSommet.size()); i++)
+        {
+            if(matriceAdj[aExplorer->getIndice()][i] != 0)
+        }
+
+    }
+    
+
+
+
 
 }
