@@ -1,13 +1,10 @@
 all:TP1
 
-TP1: TP1.o Sommet.o Arc.o Vehicule.o Graphe.o
-	g++ -Wall TP1.o Sommet.o Arc.o Vehicule.o Graphe.o -o TP1
+TP1: TP1.o Sommet.o Vehicule.o Graphe.o
+	g++ -Wall TP1.o Sommet.o Vehicule.o Graphe.o -o TP1
 
 Sommet.o: Sommet.cpp Sommet.hpp
 	g++ -Wall -c Sommet.cpp -o Sommet.o
-
-Arc.o: Arc.hpp arc.cpp
-	g++ -Wall -c Arc.cpp -o Arc.o
 
 Vehicule.o: Vehicule.cpp Vehicule.hpp
 	g++ -Wall -c Vehicule.cpp -o Vehicule.o

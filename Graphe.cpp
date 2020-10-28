@@ -157,7 +157,10 @@ vector<int> Graphe::plusLong(set<Sommet*> visites, Sommet* depart, int restant, 
         }
     }
     if (end)
+    {
         trajet.push_back(0);
+        trajet.push_back(i);
+    }
     return trajet;
 }
 
@@ -171,7 +174,7 @@ Graphe Graphe::extractionGraphe(Vehicule v, Sommet* depart)
 
     Graphe nouveau;
     
-    for (int i=trajet.size()-1; i>0; i--)
+    for (int i=trajet.size()-1; i > 0 ; i--)
     {
         nouveau.ajouterSommet(listeSommet[trajet[i]]);
         if (i - 1 >= 1)
