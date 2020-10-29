@@ -4,7 +4,7 @@
 #include <vector>
 #include <set>
 #include <list>
-#include <limits>
+#include <climits>
 
 using namespace std;
 
@@ -198,6 +198,33 @@ int Graphe::autonomieRestante(Vehicule voiture, vector<Sommet *> chemin)
     return voiture.getAutonomie();
 }
 
+int Graphe::longueurChemin(vector<Sommet *> chemin)
+{
+    int distance = 0;
+    for(int i = 0; i < int(chemin.size())-1;i++)
+    {
+        distance += matriceAdj[chemin[i]->getIndice()][chemin[i+1]->getIndice()];
+    }
+    return distance;
+}
+
+void Graphe::explorerSommet(Sommet *aExplorer, vector<vector<Sommet *>> chemins, vector<int> distances)
+{
+    for(int i = 0; i < int(listeSommet.size()); i++)
+        {
+            cout << "hey" << endl;
+            if(matriceAdj[aExplorer->getIndice()][i] != 0)
+            {
+                if(distances[i] < longueurChemin(chemins[aExplorer->getIndice()]) + matriceAdj[aExplorer->getIndice()][i])
+                {
+                    chemins[i] = chemins[aExplorer->getIndice()];
+                    chemins[i].push_back(listeSommet[i]);
+                    distances[i] = longueurChemin(chemins[i]);
+                }
+            }
+        }
+}
+
 void Graphe::plusCourtChemin(Sommet *depart, Sommet *arrivee, Vehicule *voiture)
 {
     vector<int> distances;
@@ -210,6 +237,7 @@ void Graphe::plusCourtChemin(Sommet *depart, Sommet *arrivee, Vehicule *voiture)
             distances.push_back(0);
         else
             distances.push_back(INT_MAX);
+        chemins.push_back(vector<Sommet *>());
     }
 
     int distanceMin;
@@ -219,22 +247,19 @@ void Graphe::plusCourtChemin(Sommet *depart, Sommet *arrivee, Vehicule *voiture)
         distanceMin = INT_MAX;
         for(int i = 0; i < int(listeSommet.size()); i++)
         {
-            if(matriceAdj[depart->getIndice()][i] != 0 && matriceAdj[depart->getIndice()][i] < distanceMin && explores.count(listeSommet[i]) == 0 && autonomieRestante(*voiture, chemins[i]) >= matriceAdj[depart->getIndice()][i]*voiture->getConso())
+            if(distances[i] != 0 && distances[i] <= distanceMin && explores.count(listeSommet[i]) == 0 && autonomieRestante(*voiture, chemins[i]) >= matriceAdj[depart->getIndice()][i]*voiture->getConso())
             {
-                distanceMin = matriceAdj[depart->getIndice()][i];
+                distanceMin = distances[i];
                 aExplorer = listeSommet[i];
             }
         }
         explores.insert(aExplorer);
-        for(int i = 0; i < int(listeSommet.size()); i++)
-        {
-            if(matriceAdj[aExplorer->getIndice()][i] != 0)
-        }
-
+        explorerSommet(aExplorer, chemins, distances);
+        break;
     }
-    
-
-
-
-
+    for(int i = 0; i < int(chemins[arrivee->getIndice()].size()); i++)
+    {
+        cout << chemins[arrivee->getIndice()][i] << " -> ";
+    }
+    cout << endl << longueurChemin(chemins[arrivee->getIndice()]) << endl;
 }
