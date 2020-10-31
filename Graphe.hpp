@@ -37,6 +37,6 @@ public:
     void explorerSommet(Sommet *aExplorer, std::vector<std::vector<Sommet *>> *chemins, std::vector<int> *distances);
     Graphe extractionGraphe(Vehicule voiture, Sommet* depart);
     void plusCourtChemin(Sommet *depart, Sommet *arrivee, Vehicule *voiture);
-    std::vector<::vector<Sommet *>> Dijkstra(Sommet *depart, Sommet *arrivee);
+    std::vector<::vector<Sommet *>> Dijkstra(Sommet *depart);
 };
 #endif
