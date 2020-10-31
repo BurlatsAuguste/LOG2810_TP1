@@ -17,6 +17,7 @@ public:
     Vehicule();
     Vehicule(std::string carbu, int autonomie, int coeff);
     void rouler(int distanceParcourue);
+    void majAutonomie(int newAutonomie);
     void fairePlein(std::string carburant);
     int getAutonomie();
     int getAutonomieMax();

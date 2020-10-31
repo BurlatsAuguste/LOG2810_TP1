@@ -100,10 +100,8 @@ void trouverCheminPlusCourt(Graphe *carte, Vehicule *voiture)
 
 int main(int argc, char *argv[]){
     int choix_action;
-    Graphe *carte;
-    Vehicule *voiture;
-    bool executeA = false;
-    bool executeB = false;
+    Graphe *carte = NULL;
+    Vehicule *voiture = NULL;
     while(true)
     {
         cout << "Que souhaitez-vous faire ?" << endl
@@ -119,26 +117,27 @@ int main(int argc, char *argv[]){
         {
             case 1:
                 cout << "choix 1 selectionne" << endl;
-                executeA = true;
                 voiture = initialiserVehicule();
                 break;
             case 2:
                 cout << "Veuillez entrer le chemin vers le fichier" << endl;
                 cin >> filename;
                 carte = creerGraphe(filename);
-                executeB = true;
                 break;
             case 3:
                 cout << "choix 3 selectionne" << endl;
-                afficherCheminPlusLong(carte, *voiture);
-                if(!executeA)
-                {
-                    //message d'erreur
-                }
+                if(!carte || !voiture)
+                    cout << "Veuiller rentrer une voiture et un graphe au préalable" <<endl;
+                else
+                    afficherCheminPlusLong(carte, *voiture);
+                
                 break;
             case 4:
                 cout << "choix 4 selectionne" << endl;
-                trouverCheminPlusCourt(carte, voiture);
+                if(!carte || !voiture)
+                    cout << "Veuiller rentrer une voiture et un graphe au préalable" <<endl;
+                else
+                    trouverCheminPlusCourt(carte, voiture);
                 break;
             case 5:
                 carte->lireGraphe();
