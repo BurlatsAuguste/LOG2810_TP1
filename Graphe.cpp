@@ -188,12 +188,8 @@ Graphe Graphe::extractionGraphe(Vehicule v, Sommet* depart)
 
 }
 
-int Graphe::autonomieRestante(Vehicule voiture, vector<Sommet *> chemin, bool pleinDepart = false)
+int Graphe::autonomieRestante(Vehicule voiture, vector<Sommet *> chemin)
 {
-    if(pleinDepart)
-    {
-        voiture.fairePlein("hybrid");
-    }
     for(int i = 0; i < int(chemin.size())-1; i++)
     {
         voiture.fairePlein(chemin[i]->getType()); //le test de compatibilité se fait dans la fct faire_plein
@@ -286,14 +282,13 @@ void Graphe::plusCourtChemin(Sommet *depart, Sommet *arrivee, Vehicule *voiture)
 {
     vector<vector<vector<Sommet *>>> chemins;
     vector<vector<Sommet *>> intermediaire;
-    for(int i = 0; i < int(listeSommet.size());i++)
-    {
-        for(int j = 0; j < int(listeSommet.size()); j++)
+    for(int j = 0; j < int(listeSommet.size()); j++)
         {
             intermediaire.push_back(vector<Sommet *> {listeSommet[j]});
         }
+    for(int i = 0; i < int(listeSommet.size());i++)
+    { 
         chemins.push_back(intermediaire);
-        intermediaire.clear();
     }
 
     chemins[depart->getIndice()] = Dijkstra(depart);
@@ -303,12 +298,14 @@ void Graphe::plusCourtChemin(Sommet *depart, Sommet *arrivee, Vehicule *voiture)
     if(autonomie != -1)  
     {
         voiture->majAutonomie(autonomie);
-        cout << chemins[depart->getIndice()][arrivee->getIndice()][0] << endl;
+        cout << chemins[depart->getIndice()][arrivee->getIndice()][0]->getId();
         for(int i = 1; i < int(chemins[depart->getIndice()][arrivee->getIndice()].size()); i++)
         {
-            cout << " -> " << chemins[depart->getIndice()][arrivee->getIndice()][i];
+            cout << " -> " << chemins[depart->getIndice()][arrivee->getIndice()][i]->getId();
         }
         cout << endl;
+        cout << endl << "Il reste " << 100* float(autonomie)/float(voiture->getAutonomieMax()) << "% de carburant" << endl;
+        return;
     }
     
     //afin de garder le même système d'indices pour les deux matrices le nouveau graphe aura les mêmes sommets
@@ -331,7 +328,7 @@ void Graphe::plusCourtChemin(Sommet *depart, Sommet *arrivee, Vehicule *voiture)
             chemins[i] = Dijkstra(listeSommet[i]);
             for(int j = 0; j < int(listeSommet.size()); j++)
             {
-                if(autonomieRestante(*voiture, chemins[i][j], true) && (j == arrivee->getIndice() || (listeSommet[j]->getType() == "hybrid" || (voiture->getCarbu() =="hybrid" && listeSommet[j]->getType() !="rien") || voiture->getCarbu() == listeSommet[j]->getType())))
+                if(autonomieRestante(*voiture, chemins[i][j]) != -1 && (j == arrivee->getIndice() || (listeSommet[j]->getType() == "hybrid" || (voiture->getCarbu() =="hybrid" && listeSommet[j]->getType() !="rien") || voiture->getCarbu() == listeSommet[j]->getType())))
                 {
                     simplifie.ajouterArc(i, j, this->longueurChemin(chemins[i][j]));
                 }
@@ -348,15 +345,33 @@ void Graphe::plusCourtChemin(Sommet *depart, Sommet *arrivee, Vehicule *voiture)
     for(int i = 1; i < int(cheminsSimplifies[arrivee->getIndice()].size()); i++)
     {
         prochainPoint = cheminsSimplifies[arrivee->getIndice()][i];
-        courtChemin.insert(courtChemin.end(), chemins[ancienPoint->getIndice()][prochainPoint->getIndice()].begin(), chemins[ancienPoint->getIndice()][prochainPoint->getIndice()].end());
+        for(int j = 0; j < int(chemins[ancienPoint->getIndice()][prochainPoint->getIndice()].size()) - 1;j++)
+        {
+            courtChemin.push_back(chemins[ancienPoint->getIndice()][prochainPoint->getIndice()][j]);
+        }
+        
+        //courtChemin.insert(courtChemin.end(), chemins[ancienPoint->getIndice()][prochainPoint->getIndice()].begin(), chemins[ancienPoint->getIndice()][prochainPoint->getIndice()].end());
         ancienPoint = prochainPoint;
     }
-    
+    courtChemin.push_back(arrivee);
+
     autonomie = autonomieRestante(*voiture, courtChemin);
-    cout << courtChemin[0]->getId();
-    for(int i = 1; i < int(courtChemin.size()); i++)
+    if(courtChemin.size())
     {
-        cout << " -> " << courtChemin[i];
+        cout << courtChemin[0]->getId();
+        for(int i = 1; i < int(courtChemin.size()); i++)
+        {
+            cout << " -> " << courtChemin[i]->getId();
+        }
+        if(autonomie != -1)
+        {
+            cout << endl << "Il reste " << 100* float(autonomie)/float(voiture->getAutonomieMax()) << "% de carburant" << endl;
+            voiture->majAutonomie(autonomie);
+        }
+        else 
+            cout << "Pas assez de carburant pour atteindre la destination, trajet annulé" << endl;
     }
-    cout << endl << "Il reste " << autonomie/voiture->getAutonomieMax() << "% de carburant" << endl;
+    else
+        cout << "Pas d'itinéraire possible" <<endl;
+    
 }

@@ -110,7 +110,8 @@ int main(int argc, char *argv[]){
                 <<"3 Extraire un sous-graphe"<< endl
                << "4 Determiner le plus court chemin"<< endl
                << "5 Afficher carte" << endl 
-                <<"6 Quitter" <<endl; //la 5 est pas demandée dans le TP mais c'est pour tester lireGraphe
+               << "6 Afficher autonomie restante" <<endl
+                <<"7 Quitter" <<endl; //la 5 est pas demandée dans le TP mais c'est pour tester lireGraphe
         cin >> choix_action;
         string filename;
         switch(choix_action)
@@ -143,6 +144,9 @@ int main(int argc, char *argv[]){
                 carte->lireGraphe();
                 break;
             case 6:
+                cout << "Il reste " <<100 * float(voiture->getAutonomie())/float(voiture->getAutonomieMax()) << "% de carburant" << endl;
+                break;
+            case 7:
                 cout << "au revoir" << endl;
                 delete(carte);
                 delete(voiture);
