@@ -39,3 +39,8 @@ int Vehicule::getConso()
 {
     return consommation;
 }
+
+string Vehicule::getCarbu()
+{
+    return typeCarburant;
+}

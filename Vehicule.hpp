@@ -22,6 +22,7 @@ public:
     int getAutonomie();
     int getAutonomieMax();
     int getConso();
+    std::string getCarbu();
 };
 #endif
 
