@@ -46,7 +46,7 @@ Graphe *creerGraphe(string filename)
     return carte;
 }
 
-Vehicule initialiserVehicule()
+Vehicule *initialiserVehicule()
 {
     string typeCarburant;
     while(true)
@@ -71,7 +71,7 @@ Vehicule initialiserVehicule()
     cout << "Veuillez indiquer la consommation au kilomètre du véhicule" << endl;
     cin >> consommation;
     
-    Vehicule voiture = Vehicule(typeCarburant, autonomie, consommation);
+    Vehicule *voiture = new Vehicule(typeCarburant, autonomie, consommation);
     return voiture;
 }
 
@@ -85,13 +85,23 @@ void afficherCheminPlusLong(Graphe *carte, Vehicule voiture)
     plusLong.lireGraphe();
 }
 
+void trouverCheminPlusCourt(Graphe *carte, Vehicule *voiture)
+{
+    string sommet;
+    cout << "Veuillez indiquer le point de départ" << endl;
+    cin >> sommet;
+    Sommet *depart = carte->trouverSommet(sommet);
+    cout << "Veuillez indiquer le point d'arrivée" << endl;
+    cin >> sommet;
+    Sommet *arrivee = carte->trouverSommet(sommet);
+    carte->plusCourtChemin(depart, arrivee, voiture);
+}
+
 
 int main(int argc, char *argv[]){
     int choix_action;
-    Graphe *carte;
-    Vehicule voiture;
-    bool executeA = false;
-    bool executeB = false;
+    Graphe *carte = NULL;
+    Vehicule *voiture = NULL;
     while(true)
     {
         cout << "Que souhaitez-vous faire ?" << endl
@@ -107,25 +117,27 @@ int main(int argc, char *argv[]){
         {
             case 1:
                 cout << "choix 1 selectionne" << endl;
-                executeA = true;
                 voiture = initialiserVehicule();
                 break;
             case 2:
                 cout << "Veuillez entrer le chemin vers le fichier" << endl;
                 cin >> filename;
                 carte = creerGraphe(filename);
-                executeB = true;
                 break;
             case 3:
                 cout << "choix 3 selectionne" << endl;
-                afficherCheminPlusLong(carte, voiture);
-                if(!executeA)
-                {
-                    //message d'erreur
-                }
+                if(!carte || !voiture)
+                    cout << "Veuiller rentrer une voiture et un graphe au préalable" <<endl;
+                else
+                    afficherCheminPlusLong(carte, *voiture);
+                
                 break;
             case 4:
                 cout << "choix 4 selectionne" << endl;
+                if(!carte || !voiture)
+                    cout << "Veuiller rentrer une voiture et un graphe au préalable" <<endl;
+                else
+                    trouverCheminPlusCourt(carte, voiture);
                 break;
             case 5:
                 carte->lireGraphe();
@@ -133,6 +145,7 @@ int main(int argc, char *argv[]){
             case 6:
                 cout << "au revoir" << endl;
                 delete(carte);
+                delete(voiture);
                 exit(0);
                 break;
             default:

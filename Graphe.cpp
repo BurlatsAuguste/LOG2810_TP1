@@ -4,6 +4,7 @@
 #include <vector>
 #include <set>
 #include <list>
+#include <climits>
 
 using namespace std;
 
@@ -185,4 +186,114 @@ Graphe Graphe::extractionGraphe(Vehicule v, Sommet* depart)
 
     return nouveau;
 
+}
+
+int Graphe::autonomieRestante(Vehicule voiture, vector<Sommet *> chemin)
+{
+    for(int i = 0; i < int(chemin.size())-1; i++)
+    {
+        voiture.fairePlein(chemin[i]->getType()); //le test de compatibilité se fait dans la fct faire_plein
+        voiture.rouler(matriceAdj[chemin[i]->getIndice()][chemin[i+1]->getIndice()]);
+        if(voiture.getAutonomie() < 0)
+        {
+            return -1; //en cas de panne sèche on retourne -1 pour signifier que le chemin est impraticable
+        }
+    }
+    return voiture.getAutonomie();
+}
+
+int Graphe::longueurChemin(vector<Sommet *> chemin)
+{
+    int distance = 0;
+    for(int i = 0; i < int(chemin.size())-1;i++)
+    {
+        distance += matriceAdj[chemin[i]->getIndice()][chemin[i+1]->getIndice()];
+    }
+    return distance;
+}
+
+void Graphe::explorerSommet(Sommet *aExplorer, vector<vector<Sommet *>> *chemins, vector<int> *distances)
+{
+    cout << aExplorer->getId() << endl;
+    for(int i = 0; i < int(listeSommet.size()); i++)
+        {
+            if(matriceAdj[aExplorer->getIndice()][i] != 0)
+            {
+                cout << listeSommet[i]->getId() <<endl;
+                if((*distances)[i] < longueurChemin((*chemins)[aExplorer->getIndice()]) + matriceAdj[aExplorer->getIndice()][i])
+                {
+                    (*chemins)[i] = (*chemins)[aExplorer->getIndice()];
+                    (*chemins)[i].push_back(listeSommet[i]);
+                    (*distances)[i] = longueurChemin((*chemins)[i]);
+                }
+            }
+        }
+}
+
+vector<vector<Sommet *>> Graphe::Dijkstra(Sommet *depart)
+{
+    vector<int> distances;
+    vector<bool> explores;
+    vector<vector<Sommet *>> chemins;
+
+    for(int i = 0; i<int(listeSommet.size()); i++)
+    {
+        if(i == depart->getIndice())
+        {
+            distances.push_back(0);
+        }
+        else
+        {
+            distances.push_back(INT_MAX);
+            explores.push_back(false);
+        }
+        chemins.push_back(vector<Sommet *> {depart});
+    }
+
+    int distanceMin;
+    int aExplorer;
+    for(int count = 0; count < int(listeSommet.size()) - 1; count++)
+    {
+        distanceMin = INT_MAX;
+        for(int i = 0; i< int(listeSommet.size());i++)
+        {
+            if(distances[i] <= distanceMin && !explores[i])
+            {
+                distanceMin = distances[i];
+                aExplorer = i;
+            }
+        }
+
+        explores[aExplorer] = true;
+        for(int i = 0; i < int(listeSommet.size()); i++)
+        {
+            if(!explores[i] && matriceAdj[aExplorer][i] && distances[aExplorer] != INT_MAX && distances[aExplorer] + matriceAdj[aExplorer][i] < distances[i])
+            {
+                cout << "Exploration " << listeSommet[i]->getId() << endl;
+                distances[i] = distances[aExplorer] + matriceAdj[aExplorer][i];
+                chemins[i] = chemins[aExplorer];
+                chemins[i].push_back(listeSommet[i]);
+            }
+        }
+    }
+    return chemins;
+}
+
+void Graphe::plusCourtChemin(Sommet *depart, Sommet *arrivee, Vehicule *voiture)
+{
+    vector<vector<Sommet *>> chemins = Dijkstra(depart);
+    int autonomie = autonomieRestante(*voiture, chemins[arrivee->getIndice()]);
+    //si le chemin entre le départ et l'arrivée, le plus court possible en ne prenant en compte que la distance,
+    // est praticable avec notre autonomie actuelle, alors c'est forcément lui le plus court chemin
+    if(autonomie != -1)  
+    {
+        voiture->majAutonomie(autonomie);
+        cout << chemins[arrivee->getIndice()][0] << endl;
+        for(int i = 1; i < int(chemins[arrivee->getIndice()].size()); i++)
+        {
+            cout << " -> " << chemins[arrivee->getIndice()][i];
+        }
+        cout << endl;
+    }
+    //sinon on construit un nouveau graphe {à implémenter}
 }

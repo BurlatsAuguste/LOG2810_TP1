@@ -16,9 +16,15 @@ void Vehicule::rouler(int distanceParcourue)
     autonomieRestante = autonomieRestante - distanceParcourue*consommation;
 }
 
-void Vehicule::faire_plein()
+void Vehicule::fairePlein(string carburant)
 {
-    autonomieRestante = 100;
+    if(carburant != "rien" && (carburant == "hybrid" || typeCarburant =="hybrid" || typeCarburant == carburant))
+        autonomieRestante = autonomieMax;
+}
+
+void Vehicule::majAutonomie(int newAutonomie)
+{
+    autonomieRestante = newAutonomie;
 }
 
 int Vehicule::getAutonomie() {
