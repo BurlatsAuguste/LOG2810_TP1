@@ -8,6 +8,13 @@ Sommet::Sommet(string id, string recharge, int indi):identifiant{id},type{rechar
 {
     
 }
+bool Sommet::estPompe(string typeCarbu)
+{
+    if(type == "hybrid" || (typeCarbu =="hybrid" && type !="rien") || typeCarbu == type)
+        return true;
+    else
+        return false;
+}
 
 
 string Sommet::getId(){

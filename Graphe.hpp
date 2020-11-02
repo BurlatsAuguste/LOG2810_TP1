@@ -20,6 +20,7 @@ public:
     Graphe(std::vector<Sommet *> sommet);
     Graphe();
     ~Graphe();
+    void deleteSommet();
     std::vector<Sommet *> getSommets();
     
     void genererMatrice(std::string listeArc);
@@ -37,6 +38,6 @@ public:
     void explorerSommet(Sommet *aExplorer, std::vector<std::vector<Sommet *>> *chemins, std::vector<int> *distances);
     Graphe extractionGraphe(Vehicule voiture, Sommet* depart);
     void plusCourtChemin(Sommet *depart, Sommet *arrivee, Vehicule *voiture);
-    std::vector<std::vector<Sommet *>> Dijkstra(Sommet *depart);
+    std::vector<std::vector<Sommet *>> Dijkstra(Sommet *depart, Vehicule *voiture);
 };
 #endif

@@ -148,6 +148,7 @@ int main(int argc, char *argv[]){
                 break;
             case 7:
                 cout << "au revoir" << endl;
+                carte->deleteSommet();
                 delete(carte);
                 delete(voiture);
                 exit(0);

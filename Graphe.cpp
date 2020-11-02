@@ -25,6 +25,9 @@ Graphe::Graphe()
 {}
 
 Graphe::~Graphe()
+{}
+
+void Graphe::deleteSommet()
 {
     for(int i = 0; i < int(listeSommet.size()); i++)
     {
@@ -230,7 +233,7 @@ void Graphe::explorerSommet(Sommet *aExplorer, vector<vector<Sommet *>> *chemins
         }
 }
 
-vector<vector<Sommet *>> Graphe::Dijkstra(Sommet *depart)
+vector<vector<Sommet *>> Graphe::Dijkstra(Sommet *depart, Vehicule *voiture)
 {
     vector<int> distances;
     vector<bool> explores;
@@ -252,6 +255,7 @@ vector<vector<Sommet *>> Graphe::Dijkstra(Sommet *depart)
 
     int distanceMin;
     int aExplorer;
+    int autonomie;
     for(int count = 0; count < int(listeSommet.size()) - 1; count++)
     {
         distanceMin = INT_MAX;
@@ -265,9 +269,15 @@ vector<vector<Sommet *>> Graphe::Dijkstra(Sommet *depart)
         }
 
         explores[aExplorer] = true;
+        //les distances qui nous intéressent sont soit celles accessibles sans recharger (afin de construire le graphe simplifié) d'où le get autonomie,
+        //soit les points voisins d'une pompe (pour le dijkstra sur le graphe simplifié) d'où le get autonomie max
+        if(listeSommet[aExplorer]->estPompe(voiture->getCarbu()))
+            autonomie = voiture->getAutonomieMax();
+        else 
+            autonomie = voiture->getAutonomie();
         for(int i = 0; i < int(listeSommet.size()); i++)
         {
-            if(!explores[i] && matriceAdj[aExplorer][i] && distances[aExplorer] != INT_MAX && distances[aExplorer] + matriceAdj[aExplorer][i] < distances[i])
+            if(!explores[i] && matriceAdj[aExplorer][i] && distances[aExplorer] != INT_MAX && distances[aExplorer] + matriceAdj[aExplorer][i] < distances[i] && autonomie >= distances[aExplorer] + matriceAdj[aExplorer][i]*voiture->getConso())
             {
                 distances[i] = distances[aExplorer] + matriceAdj[aExplorer][i];
                 chemins[i] = chemins[aExplorer];
@@ -290,88 +300,64 @@ void Graphe::plusCourtChemin(Sommet *depart, Sommet *arrivee, Vehicule *voiture)
     { 
         chemins.push_back(intermediaire);
     }
-
-    chemins[depart->getIndice()] = Dijkstra(depart);
-    int autonomie = autonomieRestante(*voiture, chemins[depart->getIndice()][arrivee->getIndice()]);
-    //si le chemin entre le départ et l'arrivée, le plus court possible en ne prenant en compte que la distance,
-    // est praticable avec notre autonomie actuelle, alors c'est forcément lui le plus court chemin
-    if(autonomie != -1)  
-    {
-        voiture->majAutonomie(autonomie);
-        cout << chemins[depart->getIndice()][arrivee->getIndice()][0]->getId();
-        for(int i = 1; i < int(chemins[depart->getIndice()][arrivee->getIndice()].size()); i++)
-        {
-            cout << " -> " << chemins[depart->getIndice()][arrivee->getIndice()][i]->getId();
-        }
-        cout << endl;
-        cout << endl << "Il reste " << 100* float(autonomie)/float(voiture->getAutonomieMax()) << "% de carburant" << endl;
-        return;
-    }
     
     //afin de garder le même système d'indices pour les deux matrices le nouveau graphe aura les mêmes sommets
     //les sommets indésirable seront mis à l'écart grâce à l'absence d'arc avec les autres sommets
     Graphe simplifie = Graphe(this->getSommets());
-    for(int i = 0; i < int(listeSommet.size()); i++)
-    {
-        //si le sommet d'arrivé est soit une pompe de carburant soit le point d'arrivé et qu'il est suffisamment proche on ajoute un arc dans notre nouveau graphe
-        if(autonomieRestante(*voiture, chemins[depart->getIndice()][i]) != -1 && (i == arrivee->getIndice() || (listeSommet[i]->getType() == "hybrid" || (voiture->getCarbu() =="hybrid" && listeSommet[i]->getType() !="rien") || voiture->getCarbu() == listeSommet[i]->getType())))
-        {
-            simplifie.ajouterArc(depart->getIndice(), i, this->longueurChemin(chemins[depart->getIndice()][i]));
-        }
-    }
 
     for(int i = 0; i < int(listeSommet.size());i++)
     {
-        //si le sommet est une pompe de carburant alors on effectue un dijkstra depuis ce sommet et on ajoute ses arcs sortants
-        if((listeSommet[i]->getType() == "hybrid" || (voiture->getCarbu() =="hybrid" && listeSommet[i]->getType() !="rien") || voiture->getCarbu() == listeSommet[i]->getType()))
+        //si le sommet est une pompe de carburant, ou le point de départ alors on effectue un dijkstra depuis ce sommet et on ajoute ses arcs sortants
+        if(listeSommet[i]->estPompe(voiture->getCarbu()) || i == depart->getIndice())
         {
-            chemins[i] = Dijkstra(listeSommet[i]);
+            if(listeSommet[i]->estPompe(voiture->getCarbu()))
+                chemins[i] = Dijkstra(listeSommet[i], voiture);
+            else
+                chemins[i] = Dijkstra(listeSommet[i], voiture);
             for(int j = 0; j < int(listeSommet.size()); j++)
             {
-                if(autonomieRestante(*voiture, chemins[i][j]) != -1 && (j == arrivee->getIndice() || (listeSommet[j]->getType() == "hybrid" || (voiture->getCarbu() =="hybrid" && listeSommet[j]->getType() !="rien") || voiture->getCarbu() == listeSommet[j]->getType())))
+                if(j == arrivee->getIndice() || listeSommet[j]->estPompe(voiture->getCarbu()))
                 {
                     simplifie.ajouterArc(i, j, this->longueurChemin(chemins[i][j]));
                 }
             }
         }
     }
+    //simplifie.lireGraphe();
 
-    vector<vector<Sommet *>> cheminsSimplifies = simplifie.Dijkstra(depart);
-    vector<Sommet *> courtChemin;
+    vector<vector<Sommet *>> cheminsSimplifies = simplifie.Dijkstra(depart, voiture);
+
+    vector<vector<Sommet *>> courtChemin;
     Sommet *prochainPoint;
     Sommet *ancienPoint = depart;
 
     //construction du vrai chemin en concaténant les différents chemins
-    for(int i = 1; i < int(cheminsSimplifies[arrivee->getIndice()].size()); i++)
+    for(int i = 0; i < int(cheminsSimplifies[arrivee->getIndice()].size()); i++)
     {
         prochainPoint = cheminsSimplifies[arrivee->getIndice()][i];
-        for(int j = 0; j < int(chemins[ancienPoint->getIndice()][prochainPoint->getIndice()].size()) - 1;j++)
-        {
-            courtChemin.push_back(chemins[ancienPoint->getIndice()][prochainPoint->getIndice()][j]);
-        }
-        
-        //courtChemin.insert(courtChemin.end(), chemins[ancienPoint->getIndice()][prochainPoint->getIndice()].begin(), chemins[ancienPoint->getIndice()][prochainPoint->getIndice()].end());
+        courtChemin.push_back(chemins[ancienPoint->getIndice()][prochainPoint->getIndice()]);
         ancienPoint = prochainPoint;
     }
-    courtChemin.push_back(arrivee);
 
-    autonomie = autonomieRestante(*voiture, courtChemin);
-    if(courtChemin.size())
-    {
-        cout << courtChemin[0]->getId();
-        for(int i = 1; i < int(courtChemin.size()); i++)
-        {
-            cout << " -> " << courtChemin[i]->getId();
-        }
-        if(autonomie != -1)
-        {
-            cout << endl << "Il reste " << 100* float(autonomie)/float(voiture->getAutonomieMax()) << "% de carburant" << endl;
-            voiture->majAutonomie(autonomie);
-        }
-        else 
-            cout << "Pas assez de carburant pour atteindre la destination, trajet annulé" << endl;
-    }
+    if(courtChemin.back().back() != arrivee)
+        cout << "Pas d'itinéraire possible" << endl;
     else
-        cout << "Pas d'itinéraire possible" <<endl;
+    {
+        cout << courtChemin[0][0]->getId();
+        for (int i = 0; i < int(courtChemin.size()); i++)
+        {
+            for(int j = 1; j < int(courtChemin[i].size()); j++)
+            {
+                cout << " -> " << courtChemin[i][j]->getId();
+            }
+        }
+        int autonomie;
+        if(courtChemin.back()[0]->estPompe(voiture->getCarbu()))
+            autonomie = voiture->getAutonomieMax() - longueurChemin(courtChemin.back()) * voiture->getConso();
+        else
+            autonomie = voiture->getAutonomie() - longueurChemin(courtChemin.back()) * voiture->getConso();
+        voiture->majAutonomie(autonomie);
+        cout << endl << "Il reste " << autonomie << "% de carburant" << endl;
+    }
     
 }
