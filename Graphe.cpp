@@ -386,7 +386,15 @@ void Graphe::plusCourtChemin(Sommet* depart, Sommet* arrivee, Vehicule voiture)
         rep += banque[trajet.substr(i,2)];
 
     }
-    cout<<depart->getId()<<rep<<endl;
+    int sansRecharge = nouveau.getMatrice()[nouveau.trouverSommet(trajet.substr(i, 1))->getIndice()][fin->getIndice()];
+    voiture.rouler(sansRecharge);
+
+    cout << depart->getId();
+    for (int i = 0; i < rep.size(); i++)
+    {
+        cout << "->" << rep.substr(i, 1);
+    }
+    cout << endl;
     cout<<"Distance : " << final[fin->getIndice()].first<<endl;
 
 
