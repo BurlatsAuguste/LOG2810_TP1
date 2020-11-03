@@ -32,6 +32,12 @@ Graphe *creerGraphe(string filename)
     string listeSommet;
     string listeArc;
 
+    if(!file)
+    {
+        cout << "Impossible d'ouvrir le fichier en lecture" << endl;
+        return NULL;
+    }
+
     //on génère les sommets à l'aide de la première ligne du fichier
     getline(file, listeSommet);
     vector<Sommet *> vectorSommet = genererSommets(listeSommet);
@@ -78,9 +84,17 @@ Vehicule *initialiserVehicule()
 void afficherCheminPlusLong(Graphe *carte, Vehicule voiture)
 {
     string depart;
-    cout << "Veuillez indiquer un point de départ" << endl;
-    cin >> depart;
-    Sommet *sommetDepart = carte->trouverSommet(depart);
+    Sommet *sommetDepart;
+    while(true)
+    {
+        cout << "Veuillez indiquer un point de départ" << endl;
+        cin >> depart;
+        sommetDepart = carte->trouverSommet(depart);
+        if(!sommetDepart)
+            cout << "Sommet non valide" << endl;
+        else
+            break;
+    }
     Graphe plusLong = carte->extractionGraphe(voiture, sommetDepart);
     plusLong.lireGraphe();
 }
@@ -88,12 +102,28 @@ void afficherCheminPlusLong(Graphe *carte, Vehicule voiture)
 void trouverCheminPlusCourt(Graphe *carte, Vehicule *voiture)
 {
     string sommet;
-    cout << "Veuillez indiquer le point de départ" << endl;
-    cin >> sommet;
-    Sommet *depart = carte->trouverSommet(sommet);
-    cout << "Veuillez indiquer le point d'arrivée" << endl;
-    cin >> sommet;
-    Sommet *arrivee = carte->trouverSommet(sommet);
+    Sommet *depart;
+    Sommet *arrivee;
+    while(true)
+    {
+        cout << "Veuillez indiquer le point de départ" << endl;
+        cin >> sommet;
+        depart = carte->trouverSommet(sommet);
+        if(!depart)
+            cout << "Sommet non valide" << endl;
+        else
+            break;
+    }
+    while (true)
+    {
+        cout << "Veuillez indiquer le point d'arrivée" << endl;
+        cin >> sommet;
+        arrivee = carte->trouverSommet(sommet);
+        if(!arrivee)
+            cout << "Sommet non valide" << endl;
+        else 
+            break;
+    }
     carte->plusCourtChemin(depart, arrivee, voiture);
 }
 
@@ -104,7 +134,7 @@ int main(int argc, char *argv[]){
     Vehicule *voiture = NULL;
     while(true)
     {
-        cout << "Que souhaitez-vous faire ?" << endl
+        cout << endl << "Que souhaitez-vous faire ?" << endl
                << "1 Demander les caracteristiques du vehicule"<< endl
                <<"2 Mettre a jour la carte"<< endl
                 <<"3 Extraire un sous-graphe"<< endl
@@ -140,10 +170,14 @@ int main(int argc, char *argv[]){
                     trouverCheminPlusCourt(carte, voiture);
                 break;
             case 5:
-                carte->lireGraphe();
+                if(!carte)
+                    cout << "Veuiller d'abord charger un graphe" << endl;
+                else 
+                    carte->lireGraphe();
                 break;
             case 6:
                 cout << "au revoir" << endl;
+                carte->deleteSommet();
                 delete(carte);
                 delete(voiture);
                 exit(0);
