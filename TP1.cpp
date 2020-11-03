@@ -75,12 +75,43 @@ Vehicule *initialiserVehicule()
     //l'utilisateur est invité à saisir l'autonomie du véhicule
     int autonomie;
     cout << "Veuillez indiquer l'autonomie maximale du véhicule" << endl;
-    cin >> autonomie;
+    while(true)
+    {
+        if(cin >> autonomie)
+        {
+            if(autonomie <= 0)
+                cout << "l'autonomie doit être supérieure à 0" << endl;
+            else
+                break; 
+        }
+        else
+        {
+            cout << "Veuillez entrer un nombre entier" << endl;
+            cin.clear();
+            cin.ignore(1);
+        }
+    }  
 
     //l'utilisateur est invité à saisir la consommation du véhicule
     int consommation;
     cout << "Veuillez indiquer la consommation au kilomètre du véhicule" << endl;
-    cin >> consommation;
+    while (true)
+    {
+        if(cin >> consommation)
+            if(consommation <= 0)
+                cout << "la consommation doit être supérieure à 0" << endl;
+            else
+                break;
+        else
+        {
+            cout << "Veuillez entrer un nombre entier" << endl;
+            cin.clear();
+            cin.ignore(1);
+        }
+
+    }
+    
+    
     
     //initialisation du véhicule
     Vehicule *voiture = new Vehicule(typeCarburant, autonomie, consommation);
@@ -159,48 +190,60 @@ int main(int argc, char *argv[]){
                << "5 Afficher carte" << endl 
                 <<"6 Quitter" <<endl;
         //choix de l'action
-        cin >> choix_action;
-        switch(choix_action)
+        if(cin >> choix_action)
         {
-            case 1:
-                voiture = initialiserVehicule();
-                break;
-            case 2:
-                cout << "Veuillez entrer le chemin vers le fichier" << endl;
-                cin >> filename;
-                carte = creerGraphe(filename);
-                break;
-            case 3:
-                if(!carte || !voiture)
-                    cout << "Veuiller rentrer une voiture et un graphe au préalable" <<endl;
-                else
-                    afficherCheminPlusLong(carte, *voiture);
-                
-                break;
-            case 4:
-                if(!carte || !voiture)
-                    cout << "Veuiller rentrer une voiture et un graphe au préalable" <<endl;
-                else
-                    trouverCheminPlusCourt(carte, voiture);
-                break;
-            case 5:
-                if(!carte)
-                    cout << "Veuiller d'abord charger un graphe" << endl;
-                else 
-                    carte->lireGraphe();
-                break;
-            case 6:
-                cout << "au revoir" << endl;
-                //suppression des pointeurs pour éviter les fuites de mémoire
-                carte->deleteSommet();
-                delete(carte);
-                delete(voiture);
-                exit(0);
-                break;
-            default:
-                cout <<"Veuillez indiquer votre selection par un nombre en 1 et 5" << endl;
-                
+            switch(choix_action)
+            {
+                case 1:
+                    voiture = initialiserVehicule();
+                    break;
+                case 2:
+                    cout << "Veuillez entrer le chemin vers le fichier" << endl;
+                    cin >> filename;
+                    carte = creerGraphe(filename);
+                    break;
+                case 3:
+                    if(!carte || !voiture)
+                        cout << "Veuiller rentrer une voiture et un graphe au préalable" <<endl;
+                    else
+                        afficherCheminPlusLong(carte, *voiture);
+                    
+                    break;
+                case 4:
+                    if(!carte || !voiture)
+                        cout << "Veuiller rentrer une voiture et un graphe au préalable" <<endl;
+                    else
+                        trouverCheminPlusCourt(carte, voiture);
+                    break;
+                case 5:
+                    if(!carte)
+                        cout << "Veuiller d'abord charger un graphe" << endl;
+                    else 
+                        carte->lireGraphe();
+                    break;
+                case 6:
+                    cout << "au revoir" << endl;
+                    //suppression des pointeurs pour éviter les fuites de mémoire
+                    if(carte)
+                    {
+                        carte->deleteSommet();
+                        delete(carte);
+                    }
+                    if(voiture)
+                        delete(voiture);
+                    exit(0);
+                    break;
+                default:
+                    cout <<"Veuillez indiquer votre selection par un nombre en 1 et 5" << endl;
+            } 
         }
+        else
+        {
+            cout <<"Veuillez indiquer votre selection par un nombre en 1 et 5" << endl;
+            cin.clear();
+            cin.ignore(1);
+        }
+        
     }
 
 }
