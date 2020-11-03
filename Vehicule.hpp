@@ -16,11 +16,11 @@ private:
 public:
     Vehicule();
     Vehicule(std::string carbu, int autonomie, int coeff);
-    void majAutonomie(int newAutonomie);
+    void rouler(int distanceParcourue);
+    void faire_plein();
     int getAutonomie();
     int getAutonomieMax();
     int getConso();
-    std::string getCarbu();
 };
 #endif
 
