@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Vehicule::Vehicule() : typeCarburant{ "essence" }, autonomieRestante{ 100 }, autonomieMax{ 100 }, consommation{ 1 }
+Vehicule::Vehicule() : typeCarburant{ "essence" }, autonomieRestante{ 10 }, autonomieMax{ 10 }, consommation{ 1 }
 {
 
 }
@@ -32,4 +32,11 @@ int Vehicule::getAutonomieMax() {
 int Vehicule::getConso()
 {
     return consommation;
+}
+
+bool Vehicule::plein(string type){
+    if (type.compare("hybrid") == 0)
+        return true;
+    return type.compare(typeCarburant)==0;
+
 }
