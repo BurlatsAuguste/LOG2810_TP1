@@ -4,19 +4,10 @@
 
 using namespace std;
 
+//constructeur de la classe Sommet
 Sommet::Sommet(string id, string recharge, int indi):identifiant{id},type{recharge},indice{indi}
 {
     
-}
-
-//retourne vrai si la pompe est compatible avec le type de carburant donné en argumant
-//retourne faux sinon
-bool Sommet::estPompe(string typeCarbu)
-{
-    if(type == "hybrid" || (typeCarbu =="hybrid" && type !="rien") || typeCarbu == type)
-        return true;
-    else
-        return false;
 }
 
 //retourne l'identifiant du sommet
