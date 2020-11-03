@@ -21,6 +21,7 @@ public:
     int getAutonomie();
     int getAutonomieMax();
     int getConso();
+    bool plein(std::string type);
 };
 #endif
 
