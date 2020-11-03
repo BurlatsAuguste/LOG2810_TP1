@@ -191,20 +191,6 @@ Graphe Graphe::extractionGraphe(Vehicule v, Sommet* depart)
 
 }
 
-int Graphe::autonomieRestante(Vehicule voiture, vector<Sommet *> chemin)
-{
-    for(int i = 0; i < int(chemin.size())-1; i++)
-    {
-        voiture.fairePlein(chemin[i]->getType()); //le test de compatibilité se fait dans la fct faire_plein
-        voiture.rouler(matriceAdj[chemin[i]->getIndice()][chemin[i+1]->getIndice()]);
-        if(voiture.getAutonomie() < 0)
-        {
-            return -1; //en cas de panne sèche on retourne -1 pour signifier que le chemin est impraticable
-        }
-    }
-    return voiture.getAutonomie();
-}
-
 int Graphe::longueurChemin(vector<Sommet *> chemin)
 {
     int distance = 0;
@@ -215,25 +201,7 @@ int Graphe::longueurChemin(vector<Sommet *> chemin)
     return distance;
 }
 
-void Graphe::explorerSommet(Sommet *aExplorer, vector<vector<Sommet *>> *chemins, vector<int> *distances)
-{
-    cout << aExplorer->getId() << endl;
-    for(int i = 0; i < int(listeSommet.size()); i++)
-        {
-            if(matriceAdj[aExplorer->getIndice()][i] != 0)
-            {
-                cout << listeSommet[i]->getId() <<endl;
-                if((*distances)[i] < longueurChemin((*chemins)[aExplorer->getIndice()]) + matriceAdj[aExplorer->getIndice()][i])
-                {
-                    (*chemins)[i] = (*chemins)[aExplorer->getIndice()];
-                    (*chemins)[i].push_back(listeSommet[i]);
-                    (*distances)[i] = longueurChemin((*chemins)[i]);
-                }
-            }
-        }
-}
-
-vector<vector<Sommet *>> Graphe::Dijkstra(Sommet *depart, Vehicule *voiture)
+vector<vector<Sommet *>> Graphe::Dijkstra(Sommet *depart)
 {
     vector<int> distances;
     vector<bool> explores;
@@ -242,20 +210,16 @@ vector<vector<Sommet *>> Graphe::Dijkstra(Sommet *depart, Vehicule *voiture)
     for(int i = 0; i<int(listeSommet.size()); i++)
     {
         if(i == depart->getIndice())
-        {
             distances.push_back(0);
-        }
         else
-        {
             distances.push_back(INT_MAX);
-            explores.push_back(false);
-        }
+        
+        explores.push_back(false);
         chemins.push_back(vector<Sommet *> {depart});
     }
 
     int distanceMin;
     int aExplorer;
-    int autonomie;
     for(int count = 0; count < int(listeSommet.size()) - 1; count++)
     {
         distanceMin = INT_MAX;
@@ -269,21 +233,16 @@ vector<vector<Sommet *>> Graphe::Dijkstra(Sommet *depart, Vehicule *voiture)
         }
 
         explores[aExplorer] = true;
-        //les distances qui nous intéressent sont soit celles accessibles sans recharger (afin de construire le graphe simplifié) d'où le get autonomie,
-        //soit les points voisins d'une pompe (pour le dijkstra sur le graphe simplifié) d'où le get autonomie max
-        if(listeSommet[aExplorer]->estPompe(voiture->getCarbu()))
-            autonomie = voiture->getAutonomieMax();
-        else 
-            autonomie = voiture->getAutonomie();
         for(int i = 0; i < int(listeSommet.size()); i++)
         {
-            if(!explores[i] && matriceAdj[aExplorer][i] && distances[aExplorer] != INT_MAX && distances[aExplorer] + matriceAdj[aExplorer][i] < distances[i] && autonomie >= distances[aExplorer] + matriceAdj[aExplorer][i]*voiture->getConso())
+            if(!explores[i] && matriceAdj[aExplorer][i] && distances[aExplorer] != INT_MAX && distances[aExplorer] + matriceAdj[aExplorer][i] < distances[i])
             {
                 distances[i] = distances[aExplorer] + matriceAdj[aExplorer][i];
                 chemins[i] = chemins[aExplorer];
                 chemins[i].push_back(listeSommet[i]);
             }
         }
+        
     }
     return chemins;
 }
@@ -304,28 +263,30 @@ void Graphe::plusCourtChemin(Sommet *depart, Sommet *arrivee, Vehicule *voiture)
     //afin de garder le même système d'indices pour les deux matrices le nouveau graphe aura les mêmes sommets
     //les sommets indésirable seront mis à l'écart grâce à l'absence d'arc avec les autres sommets
     Graphe simplifie = Graphe(this->getSommets());
-
+    int autonomie;
+    int longueurArc;
     for(int i = 0; i < int(listeSommet.size());i++)
     {
         //si le sommet est une pompe de carburant, ou le point de départ alors on effectue un dijkstra depuis ce sommet et on ajoute ses arcs sortants
         if(listeSommet[i]->estPompe(voiture->getCarbu()) || i == depart->getIndice())
         {
-            if(listeSommet[i]->estPompe(voiture->getCarbu()))
-                chemins[i] = Dijkstra(listeSommet[i], voiture);
+            chemins[i] = Dijkstra(listeSommet[i]);
+            if(i == depart->getIndice() && !depart->estPompe(voiture->getCarbu()))
+                autonomie = voiture->getAutonomie();
             else
-                chemins[i] = Dijkstra(listeSommet[i], voiture);
+                autonomie = voiture->getAutonomieMax();
             for(int j = 0; j < int(listeSommet.size()); j++)
             {
-                if(j == arrivee->getIndice() || listeSommet[j]->estPompe(voiture->getCarbu()))
+                longueurArc = this->longueurChemin(chemins[i][j]);
+                if((j == arrivee->getIndice() || listeSommet[j]->estPompe(voiture->getCarbu())) && longueurArc*voiture->getConso() <= autonomie)
                 {
-                    simplifie.ajouterArc(i, j, this->longueurChemin(chemins[i][j]));
+                    simplifie.ajouterArc(i, j, longueurArc);
                 }
             }
         }
     }
-    //simplifie.lireGraphe();
 
-    vector<vector<Sommet *>> cheminsSimplifies = simplifie.Dijkstra(depart, voiture);
+    vector<vector<Sommet *>> cheminsSimplifies = simplifie.Dijkstra(depart);
 
     vector<vector<Sommet *>> courtChemin;
     Sommet *prochainPoint;
@@ -351,11 +312,15 @@ void Graphe::plusCourtChemin(Sommet *depart, Sommet *arrivee, Vehicule *voiture)
                 cout << " -> " << courtChemin[i][j]->getId();
             }
         }
+        cout << endl;
         int autonomie;
+        cout << "derniere pompe " << courtChemin.back()[0]->getId() << endl;
         if(courtChemin.back()[0]->estPompe(voiture->getCarbu()))
             autonomie = voiture->getAutonomieMax() - longueurChemin(courtChemin.back()) * voiture->getConso();
         else
             autonomie = voiture->getAutonomie() - longueurChemin(courtChemin.back()) * voiture->getConso();
+        if(autonomie < 0)
+            autonomie = 0;
         voiture->majAutonomie(autonomie);
         cout << endl << "Il reste " << autonomie << "% de carburant" << endl;
     }

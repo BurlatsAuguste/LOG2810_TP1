@@ -7,19 +7,8 @@ Vehicule::Vehicule()
 {
 
 }
-Vehicule::Vehicule(std::string carbu, int autonomie, int coeff):typeCarburant{carbu}, consommation{coeff}, autonomieRestante{autonomie}, autonomieMax{autonomie}
+Vehicule::Vehicule(std::string carbu, int autonomie, int coeff):typeCarburant{carbu}, autonomieMax{autonomie}, autonomieRestante{autonomie},consommation{coeff}
 {
-}
-
-void Vehicule::rouler(int distanceParcourue)
-{
-    autonomieRestante = autonomieRestante - distanceParcourue*consommation;
-}
-
-void Vehicule::fairePlein(string carburant)
-{
-    if(carburant != "rien" && (carburant == "hybrid" || typeCarburant =="hybrid" || typeCarburant == carburant))
-        autonomieRestante = autonomieMax;
 }
 
 void Vehicule::majAutonomie(int newAutonomie)

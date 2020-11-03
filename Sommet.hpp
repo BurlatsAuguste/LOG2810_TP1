@@ -16,12 +16,10 @@ private:
 
 public:
     Sommet(std::string id, std::string recharge, int indi);
-    //void updateDegre(int deg);
     std::string getId();
     std::string getType();
     int getIndice();
     bool estPompe(std::string typeCarbu);
-    //int getDegre();
 };
 #endif
 
