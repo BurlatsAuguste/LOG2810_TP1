@@ -75,12 +75,40 @@ Vehicule *initialiserVehicule()
     //l'utilisateur est invité à saisir l'autonomie du véhicule
     int autonomie;
     cout << "Veuillez indiquer l'autonomie maximale du véhicule" << endl;
-    cin >> autonomie;
+    while(true)
+    {
+        if(cin >> autonomie)
+        {
+            if(autonomie == 0)
+                cout << "l'autonomie doit être supérieure à 0" << endl;
+            else
+                break; 
+        }
+        else
+        {
+            cout << "Veuillez entrer un nombre entier" << endl;
+            cin.clear();
+            cin.ignore(1);
+        }
+    }  
 
     //l'utilisateur est invité à saisir la consommation du véhicule
     int consommation;
     cout << "Veuillez indiquer la consommation au kilomètre du véhicule" << endl;
-    cin >> consommation;
+    while (true)
+    {
+        if(cin >> consommation)
+            break;
+        else
+        {
+            cout << "Veuillez entrer un nombre entier" << endl;
+            cin.clear();
+            cin.ignore(1);
+        }
+
+    }
+    
+    
     
     //initialisation du véhicule
     Vehicule *voiture = new Vehicule(typeCarburant, autonomie, consommation);
