@@ -79,7 +79,7 @@ Vehicule *initialiserVehicule()
     {
         if(cin >> autonomie)
         {
-            if(autonomie == 0)
+            if(autonomie <= 0)
                 cout << "l'autonomie doit être supérieure à 0" << endl;
             else
                 break; 
@@ -98,7 +98,10 @@ Vehicule *initialiserVehicule()
     while (true)
     {
         if(cin >> consommation)
-            break;
+            if(consommation <= 0)
+                cout << "la consommation doit être supérieure à 0" << endl;
+            else
+                break;
         else
         {
             cout << "Veuillez entrer un nombre entier" << endl;
