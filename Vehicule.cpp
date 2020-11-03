@@ -3,39 +3,33 @@
 
 using namespace std;
 
-Vehicule::Vehicule()
+Vehicule::Vehicule() : typeCarburant{ "essence" }, autonomieRestante{ 100 }, autonomieMax{ 100 }, consommation{ 1 }
 {
 
 }
-//constructeur de véhicule
-Vehicule::Vehicule(std::string carbu, int autonomie, int coeff):typeCarburant{carbu}, autonomieMax{autonomie}, autonomieRestante{autonomie},consommation{coeff}
+Vehicule::Vehicule(std::string carbu, int autonomie, int coeff):typeCarburant{carbu}, consommation{coeff}, autonomieRestante{autonomie}, autonomieMax{autonomie}
 {
 }
 
-//change la valeur de l'autonomie restante par celle donnée en argument
-void Vehicule::majAutonomie(int newAutonomie)
+void Vehicule::rouler(int distanceParcourue)
 {
-    autonomieRestante = newAutonomie;
+    autonomieRestante = autonomieRestante - distanceParcourue*consommation;
 }
 
-//retourne l'autonomie du véhicule
+void Vehicule::faire_plein()
+{
+    autonomieRestante = 100;
+}
+
 int Vehicule::getAutonomie() {
     return autonomieRestante;
 }
 
-//retourne l'autonomie maximale du véhicule
 int Vehicule::getAutonomieMax() {
     return autonomieMax;
 }
 
-//retourne la consommation du véhicule
 int Vehicule::getConso()
 {
     return consommation;
-}
-
-//retourne le type de carburant du véhicule
-string Vehicule::getCarbu()
-{
-    return typeCarburant;
 }
