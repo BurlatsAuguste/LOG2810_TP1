@@ -102,7 +102,7 @@ void Graphe::ajouterSommet(Sommet* sommet)
     listeSommet.push_back(nouveau);
     matriceAdj.push_back(vector<int>());
     matriceAdj[i].push_back(0);
-    for (int j = 0; j < int(listeSommet.size()); j++)
+    for (int j = 0; j < int(listeSommet.size() -1); j++)
     {
         matriceAdj[j].push_back(0);
         matriceAdj[i].push_back(0);
