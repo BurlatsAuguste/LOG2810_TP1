@@ -5,6 +5,7 @@
 #include <set>
 #include <list>
 #include <map>
+#include <climits>
 
 using namespace std;
 
@@ -25,6 +26,10 @@ Graphe::Graphe()
 {}
 
 Graphe::~Graphe()
+{}
+
+//permet de supprimer tout les pointeurs des sommets afin d'éviter les fuites de mémoire
+void Graphe::deleteSommet()
 {
     for(int i = 0; i < int(listeSommet.size()); i++)
     {
@@ -208,16 +213,16 @@ vector<int> Graphe::plusLong(set<Sommet*> visites, Sommet* depart, int restant, 
     return trajet;
 }
 
-Graphe Graphe::extraction(int distance, int d)
+Graphe Graphe::extraction(int autonomie, int conso, int d)
 {
     Graphe rep = Graphe();
     Sommet* depart = listeSommet[d];
     rep.ajouterSommet(depart->getId(), depart->getType());
     for (int i = 0; i < int(matriceAdj[d].size()); i++)
     {
-        if (matriceAdj[d][i] != 0 && matriceAdj[d][i]<=distance)
+        if (matriceAdj[d][i] != 0 && matriceAdj[d][i]*conso<=autonomie)
         {
-            Graphe nouveau = extraction(distance - matriceAdj[d][i], i);
+            Graphe nouveau = extraction(autonomie - matriceAdj[d][i]*conso, conso, i);
             rep += nouveau;
             rep.ajouterArc(depart->getId(), listeSommet[i]->getId(), matriceAdj[d][i]);
         }
@@ -307,12 +312,12 @@ Graphe Graphe::extractionGraphe(Vehicule v, Sommet* depart)
 
     Graphe nouveau;
 
-    for (int i=trajet.size()-1; i > 0 ; i--)
+    for (int i=int(trajet.size())-1; i > 0 ; i--)
     {
         nouveau.ajouterSommet(listeSommet[trajet[i]]);
 
     }
-    for (int j = trajet.size() - 1; j > 0; j--)
+    for (int j = int(trajet.size()) - 1; j > 0; j--)
     {
         if (j > 1)
         {
@@ -325,18 +330,18 @@ Graphe Graphe::extractionGraphe(Vehicule v, Sommet* depart)
 }
 
 
-void Graphe::plusCourtChemin(Sommet* depart, Sommet* arrivee, Vehicule voiture)
+void Graphe::plusCourtChemin(Sommet* depart, Sommet* arrivee, Vehicule *voiture)
 {
     map<string, string> banque;
 
     Graphe nouveau;
     nouveau.ajouterSommet(depart);
 
-    Graphe debut = extraction(voiture.getAutonomie()/voiture.getConso(), depart->getIndice());
+    Graphe debut = extraction(voiture->getAutonomie(), voiture->getConso(), depart->getIndice());
     vector<pair<int, string>> chemins = debut.Dijkstra(debut.getSommets()[0]);
     for(Sommet* s : debut.getSommets())
     {
-        if(voiture.plein(s->getType()) || s->getId().compare(arrivee->getId())==0)
+        if(voiture->plein(s->getType()) || s->getId().compare(arrivee->getId())==0)
         {
             nouveau.ajouterSommet(s);
             nouveau.ajouterArc(debut.getSommets()[0]->getId(), s->getId(), chemins[s->getIndice()].first);
@@ -345,17 +350,17 @@ void Graphe::plusCourtChemin(Sommet* depart, Sommet* arrivee, Vehicule voiture)
 
     }
 
-    for (int i=0; i<listeSommet.size(); i++)
+    for (int i=0; i<int(listeSommet.size()); i++)
     {
-        if (voiture.plein(listeSommet[i]->getType()))
+        if (voiture->plein(listeSommet[i]->getType()))
         {
             nouveau.ajouterSommet(listeSommet[i]);
 
-            Graphe sous = extraction(voiture.getAutonomieMax()/voiture.getConso(), i);
+            Graphe sous = extraction(voiture->getAutonomieMax(), voiture->getConso(), i);
             chemins = sous.Dijkstra(sous.getSommets()[0]);
             for(Sommet* s2 : sous.getSommets())
             {
-                if(voiture.plein(s2->getType())|| s2->getId().compare(arrivee->getId())==0)
+                if(voiture->plein(s2->getType())|| s2->getId().compare(arrivee->getId())==0)
                 {
                     nouveau.ajouterSommet(s2);
                     nouveau.ajouterArc(listeSommet[i]->getId(), s2->getId(), chemins[s2->getIndice()].first);
@@ -381,24 +386,23 @@ void Graphe::plusCourtChemin(Sommet* depart, Sommet* arrivee, Vehicule voiture)
     string trajet = final[fin->getIndice()].second;
     trajet = depart->getId()+trajet;
     string rep;
-    for (int i=0; i<trajet.size()-1; i++)
+    for (int i=0; i<int(trajet.size())-1; i++)
     {
         rep += banque[trajet.substr(i,2)];
 
     }
-    int sansRecharge = nouveau.getMatrice()[nouveau.trouverSommet(trajet.substr(i, 1))->getIndice()][fin->getIndice()];
-    voiture.rouler(sansRecharge);
+    //int sansRecharge = nouveau.getMatrice()[nouveau.trouverSommet(trajet.substr(i, 1))->getIndice()][fin->getIndice()];
+    //voiture.rouler(sansRecharge);
 
     cout << depart->getId();
-    for (int i = 0; i < rep.size(); i++)
+    for (int i = 0; i < int(rep.size()); i++)
     {
         cout << "->" << rep.substr(i, 1);
     }
     cout << endl;
     cout<<"Distance : " << final[fin->getIndice()].first<<endl;
-
-
-
+    voiture->rouler(final[fin->getIndice()].first);
+    cout << "Il reste " << 100*float(voiture->getAutonomie())/float(voiture->getAutonomieMax()) << "% de carburant" << endl;
 }
 
 

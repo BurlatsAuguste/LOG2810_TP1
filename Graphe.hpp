@@ -27,15 +27,22 @@ public:
     Sommet *trouverSommet(std::string id);
     void lireGraphe();
 
+    void ajouterSommet(std::string id, std::string type);
     void ajouterSommet(Sommet* sommet);
     void ajouterArc(int i, int j, int distance);
     void ajouterArc(std::string id1, std::string id2, int distance);
+    std::vector<std::vector<int>> getMatrice();
+    Graphe extraction(int autonomie, int conso, int d);
+    Graphe& operator=(const Graphe& other);
+    Graphe& operator+=(Graphe& other);
+    std::vector<std::pair<int, std::string>> Dijkstra(Sommet* depart);
 
     std::vector<int> plusLong(std::set<Sommet*> visites, Sommet* depart, int restant, int consommation);
 
     int longueurChemin(std::vector<Sommet *> chemin);
     Graphe extractionGraphe(Vehicule voiture, Sommet* depart);
-    void plusCourtChemin(Sommet *depart, Sommet *arrivee, Vehicule *voiture);
-    std::vector<std::vector<Sommet *>> Dijkstra(Sommet *depart);
+    //void plusCourtChemin(Sommet *depart, Sommet *arrivee, Vehicule *voiture);
+    void plusCourtChemin(Sommet* depart, Sommet* arrivee, Vehicule *voiture);
+    //std::vector<std::vector<Sommet *>> Dijkstra(Sommet *depart);
 };
 #endif
