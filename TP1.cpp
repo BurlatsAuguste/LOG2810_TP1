@@ -10,11 +10,13 @@ using namespace std;
 
 //fonction pour générer les sommets
 vector<Sommet *> genererSommets(string listeSommet){
+
     vector<Sommet *> vectorSommet;
     string delimiter = ";";
     size_t pos;
     string token;
     int i = 0;
+    
     //on découpe la string au niveau des ; et on génère un sommet avec chaque morceau
     while((pos = listeSommet.find(delimiter)) != string::npos){
         token = listeSommet.substr(0, pos);
@@ -32,6 +34,7 @@ Graphe *creerGraphe(string filename)
     string listeSommet;
     string listeArc;
 
+    //si le nom de fichier donné par l'utilisateur n'est pas bon, la fonction s'arrête et retourne NULL
     if(!file)
     {
         cout << "Impossible d'ouvrir le fichier en lecture" << endl;
@@ -44,7 +47,6 @@ Graphe *creerGraphe(string filename)
 
     //on génère les arcs à l'aide de la seconde ligne du fichier
     getline(file, listeArc);
-    //vector<Arc *> vectorArc = genererArcs(listeArc, vectorSommet);
 
     Graphe *carte = new Graphe(vectorSommet);
     carte->genererMatrice(listeArc);
@@ -55,6 +57,7 @@ Graphe *creerGraphe(string filename)
 Vehicule *initialiserVehicule()
 {
     string typeCarburant;
+    //l'utilisateur doit rentrer un type de carburant, si celui-ci ne correspond pas aux types disponibles l'utilisateur est à nouveau invité à saisir le type
     while(true)
     {
         cout << "Veuillez indiquer le type de carburant : electrique, essence ou hybrid" << endl;
@@ -69,14 +72,17 @@ Vehicule *initialiserVehicule()
         }
     }
 
+    //l'utilisateur est invité à saisir l'autonomie du véhicule
     int autonomie;
     cout << "Veuillez indiquer l'autonomie maximale du véhicule" << endl;
     cin >> autonomie;
 
+    //l'utilisateur est invité à saisir la consommation du véhicule
     int consommation;
     cout << "Veuillez indiquer la consommation au kilomètre du véhicule" << endl;
     cin >> consommation;
     
+    //initialisation du véhicule
     Vehicule *voiture = new Vehicule(typeCarburant, autonomie, consommation);
     return voiture;
 }
@@ -85,6 +91,7 @@ void afficherCheminPlusLong(Graphe *carte, Vehicule voiture)
 {
     string depart;
     Sommet *sommetDepart;
+    //l'utilisateur doit rentrer l'id du sommet de départ, si l'id ne correspond à aucun sommet, l'utilisateur est à nouveau invité à saisir le sommet de départ
     while(true)
     {
         cout << "Veuillez indiquer un point de départ" << endl;
@@ -95,7 +102,9 @@ void afficherCheminPlusLong(Graphe *carte, Vehicule voiture)
         else
             break;
     }
+    //extraction du sous-graphe resultant du chemin le plus long parcourable par le véhicule
     Graphe plusLong = carte->extractionGraphe(voiture, sommetDepart);
+    //affichage du sous-graphe
     plusLong.lireGraphe();
 }
 
@@ -104,6 +113,7 @@ void trouverCheminPlusCourt(Graphe *carte, Vehicule *voiture)
     string sommet;
     Sommet *depart;
     Sommet *arrivee;
+    //l'utilisateur doit rentrer l'id du sommet de départ, si l'id ne correspond à aucun sommet, l'utilisateur est à nouveau invité à saisir le sommet de départ
     while(true)
     {
         cout << "Veuillez indiquer le point de départ" << endl;
@@ -114,6 +124,7 @@ void trouverCheminPlusCourt(Graphe *carte, Vehicule *voiture)
         else
             break;
     }
+    //même chose pour le sommet d'arrivée
     while (true)
     {
         cout << "Veuillez indiquer le point d'arrivée" << endl;
@@ -124,29 +135,34 @@ void trouverCheminPlusCourt(Graphe *carte, Vehicule *voiture)
         else 
             break;
     }
+    //recherche du plus court Chemin
     carte->plusCourtChemin(depart, arrivee, voiture);
 }
 
 
 int main(int argc, char *argv[]){
+
+    //initialisation des variables
     int choix_action;
     Graphe *carte = NULL;
     Vehicule *voiture = NULL;
+    string filename;
+
     while(true)
     {
+        //affichage du menu
         cout << endl << "Que souhaitez-vous faire ?" << endl
                << "1 Demander les caracteristiques du vehicule"<< endl
                <<"2 Mettre a jour la carte"<< endl
                 <<"3 Extraire un sous-graphe"<< endl
                << "4 Determiner le plus court chemin"<< endl
                << "5 Afficher carte" << endl 
-                <<"6 Quitter" <<endl; //la 5 est pas demandée dans le TP mais c'est pour tester lireGraphe
+                <<"6 Quitter" <<endl;
+        //choix de l'action
         cin >> choix_action;
-        string filename;
         switch(choix_action)
         {
             case 1:
-                cout << "choix 1 selectionne" << endl;
                 voiture = initialiserVehicule();
                 break;
             case 2:
@@ -155,7 +171,6 @@ int main(int argc, char *argv[]){
                 carte = creerGraphe(filename);
                 break;
             case 3:
-                cout << "choix 3 selectionne" << endl;
                 if(!carte || !voiture)
                     cout << "Veuiller rentrer une voiture et un graphe au préalable" <<endl;
                 else
@@ -163,7 +178,6 @@ int main(int argc, char *argv[]){
                 
                 break;
             case 4:
-                cout << "choix 4 selectionne" << endl;
                 if(!carte || !voiture)
                     cout << "Veuiller rentrer une voiture et un graphe au préalable" <<endl;
                 else
@@ -177,6 +191,7 @@ int main(int argc, char *argv[]){
                 break;
             case 6:
                 cout << "au revoir" << endl;
+                //suppression des pointeurs pour éviter les fuites de mémoire
                 carte->deleteSommet();
                 delete(carte);
                 delete(voiture);
