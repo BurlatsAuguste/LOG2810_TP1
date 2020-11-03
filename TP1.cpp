@@ -8,7 +8,8 @@
 #include <set>
 using namespace std;
 
-//fonction pour générer les sommets
+//génère les sommets à l'aide de la string passée en argument
+//retourne une liste contenant les pointeurs vers ces sommets
 vector<Sommet *> genererSommets(string listeSommet){
 
     vector<Sommet *> vectorSommet;
@@ -17,17 +18,19 @@ vector<Sommet *> genererSommets(string listeSommet){
     string token;
     int i = 0;
     
-    //on découpe la string au niveau des ; et on génère un sommet avec chaque morceau
+    ////la string est lue morceau par morceau, elle est découpée au niveau des ";"
     while((pos = listeSommet.find(delimiter)) != string::npos){
         token = listeSommet.substr(0, pos);
         listeSommet.erase(0, pos + delimiter.length());
+
+        //création du nouveau sommet à partir des informations données
         Sommet *s = new Sommet(token.substr(0, token.find(',')), token.substr(token.find(',')+1,string::npos), i++);
         vectorSommet.push_back(s);
     }
     return vectorSommet;
 }
 
-//fonction pour générer un graphe
+//retourne un pointeur vers un graphe généré à l'aide des informations contenues dans la strinf passée en argument
 Graphe *creerGraphe(string filename)
 {
     ifstream file(filename);
@@ -41,19 +44,21 @@ Graphe *creerGraphe(string filename)
         return NULL;
     }
 
-    //on génère les sommets à l'aide de la première ligne du fichier
+    //les sommets sont générés à l'aide de la première ligne du fichier
     getline(file, listeSommet);
     vector<Sommet *> vectorSommet = genererSommets(listeSommet);
 
-    //on génère les arcs à l'aide de la seconde ligne du fichier
+    //les arcs sont générés à l'aide de la seconde ligne du fichier
     getline(file, listeArc);
 
+    //création du graphe
     Graphe *carte = new Graphe(vectorSommet);
     carte->genererMatrice(listeArc);
 
     return carte;
 }
 
+//retourne un pointeur vers un véhicule qui sera généré à l'aide d'informations rentrées par l'utilisateur
 Vehicule *initialiserVehicule()
 {
     string typeCarburant;
@@ -73,6 +78,7 @@ Vehicule *initialiserVehicule()
     }
 
     //l'utilisateur est invité à saisir l'autonomie du véhicule
+    //si la saisie n'est pas valide l'utilisateur est invité à recommencer la saisie
     int autonomie;
     cout << "Veuillez indiquer l'autonomie maximale du véhicule" << endl;
     while(true)
@@ -93,6 +99,7 @@ Vehicule *initialiserVehicule()
     }  
 
     //l'utilisateur est invité à saisir la consommation du véhicule
+    //si la saisie n'est pas valide l'utilisateur est invité à recommencer la saisie
     int consommation;
     cout << "Veuillez indiquer la consommation au kilomètre du véhicule" << endl;
     while (true)
@@ -110,8 +117,6 @@ Vehicule *initialiserVehicule()
         }
 
     }
-    
-    
     
     //initialisation du véhicule
     Vehicule *voiture = new Vehicule(typeCarburant, autonomie, consommation);
@@ -234,12 +239,12 @@ int main(int argc, char *argv[]){
                     exit(0);
                     break;
                 default:
-                    cout <<"Veuillez indiquer votre selection par un nombre en 1 et 5" << endl;
+                    cout <<"Veuillez indiquer votre selection par un nombre en 1 et 6" << endl;
             } 
         }
         else
         {
-            cout <<"Veuillez indiquer votre selection par un nombre en 1 et 5" << endl;
+            cout <<"Veuillez indiquer votre selection par un nombre en 1 et 6" << endl;
             cin.clear();
             cin.ignore(1);
         }

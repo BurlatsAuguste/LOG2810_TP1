@@ -19,7 +19,6 @@ public:
     std::string getId();
     std::string getType();
     int getIndice();
-    bool estPompe(std::string typeCarbu);
 };
 #endif
 

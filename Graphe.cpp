@@ -9,6 +9,9 @@
 
 using namespace std;
 
+//constructeur du graphe
+//la liste de sommet donnée en argument est utilisée comme liste des sommets du graphe
+//la matrice d'adjacence est initialisée avec toute les valeurs à 0
 Graphe::Graphe(vector<Sommet *> sommet):listeSommet{sommet}
 {
 	int size = sommet.size();
@@ -60,9 +63,6 @@ Graphe& Graphe::operator=(const Graphe& other) {
 }
 
 //affiche le graphe
-//pour chaque noeud affiche le noeud et ses voisins
-//j'ai assumé que les voisins n'était que ceux où on pouvait aller depuis le noeud en question
-//ceux qui permettent de rejoindre le noeud ne sont pas considérés comme voisins
 void Graphe::lireGraphe()
 {
     for (int i = 0; i < int(listeSommet.size()); i++)
@@ -81,11 +81,13 @@ void Graphe::lireGraphe()
     }
 }
 
+//retourne la liste de sommet du graphe
 vector<Sommet *> Graphe::getSommets()
 {
     return listeSommet;
 }
 
+//renvoit le pointeur vers le sommet dont l'id est passé en argument
 Sommet *Graphe::trouverSommet(string id){
     for(int i = 0; i<int(listeSommet.size());i++){
         if(listeSommet[i]->getId() == id){
@@ -95,6 +97,7 @@ Sommet *Graphe::trouverSommet(string id){
     return nullptr;
 }
 
+//permet de mettre à jour la matrice d'adjacence en ajoutant les coûts des arcs aux valeurs correspondantes
 void Graphe::genererMatrice(string listeArc){
     string delimiter = ";";
     size_t pos;
@@ -102,23 +105,30 @@ void Graphe::genererMatrice(string listeArc){
     Sommet *depart;
     Sommet * arrivee;
     int distance;
-    //on découpe la string au niveau des ; et on génere un arc à l'aide de chaque morceau
+    //la string est lue morceau par morceau, elle est découpée au niveau des ";"
     while((pos = listeArc.find(delimiter)) != string::npos){
         token = listeArc.substr(0, pos);
         listeArc.erase(0, pos + delimiter.length());
 
-depart = trouverSommet(token.substr(0, token.find(',')));
-token.erase(0, token.find(',') + 1);
+        //identification du sommet de départ
+        depart = trouverSommet(token.substr(0, token.find(',')));
+        token.erase(0, token.find(',') + 1);
 
-arrivee = trouverSommet(token.substr(0, token.find(',')));
-token.erase(0, token.find(',') + 1);
+        //identification du sommet d'arrivée
+        arrivee = trouverSommet(token.substr(0, token.find(',')));
+        token.erase(0, token.find(',') + 1);
 
-distance = stoi(token);
-matriceAdj[depart->getIndice()][arrivee->getIndice()] = distance;
+        //récupération du cout de l'arc
+        distance = stoi(token);
+
+        //mise à jour de la matrice d'adjacence
+        matriceAdj[depart->getIndice()][arrivee->getIndice()] = distance;
     }
 
 }
 
+//ajoute le sommet passé en argument à la liste de sommet du graphe
+//et ajoute une ligne et une colonne remplies de 0 à la matrice d'adjacence
 void Graphe::ajouterSommet(Sommet* sommet)
 {
 
@@ -136,6 +146,8 @@ void Graphe::ajouterSommet(Sommet* sommet)
     }
 }
 
+//crée un sommet avec les informations passées en arguments et l'ajoute à la liste de sommet
+//et ajoute une ligne et une colonne remplies de 0 à la matrice d'adjacence
 void Graphe::ajouterSommet(string id, string type)
 {
     int i = int(listeSommet.size());
@@ -149,33 +161,18 @@ void Graphe::ajouterSommet(string id, string type)
     }
 }
 
-vector<vector<int>> Graphe::getMatrice()
-{
-    return matriceAdj;
-}
-
-
+//remplace la valeur de la matrice d'adjacence aux indices passés en arguments par la distance passée en argument
 void Graphe::ajouterArc(int i, int j, int distance)
 {
     matriceAdj[i][j] = distance;
 }
 
+//remplace la valeur de la matrice d'adjacence aux indices passés en arguments par la distance passée en argument
 void Graphe::ajouterArc(string id1, string id2, int distance)
 {
     int i = trouverSommet(id1)->getIndice();
     int j = trouverSommet(id2)->getIndice();
     ajouterArc(i, j, distance);
-}
-
-
-bool contains(vector<Sommet*> v, int i)
-{
-    for (Sommet* s : v)
-    {
-        if (s->getIndice() == i)
-            return true;
-    }
-    return false;
 }
 
 vector<int> Graphe::plusLong(set<Sommet*> visites, Sommet* depart, int restant, int consommation)
@@ -301,21 +298,22 @@ vector<pair<int, string>> Graphe::Dijkstra(Sommet* depart)
     return rep;
 }
 
-
+//retourne un nouveau graphe résultant du plus long chemin que peut parcourir le véhicule
+//passé en argument depuis le sommet passé en argument
 Graphe Graphe::extractionGraphe(Vehicule v, Sommet* depart)
 {
+    //ce set sert à mémoriser les sommets déjà visités
     set<Sommet*> visites;
     visites.insert(depart);
+
+    //recherche du chemin le plus long
     vector<int> trajet = plusLong(visites, depart, v.getAutonomieMax(), v.getConso());
 
-    int distance = trajet[0];
-
+    //génération du nouveau graphe
     Graphe nouveau;
-
     for (int i=int(trajet.size())-1; i > 0 ; i--)
     {
         nouveau.ajouterSommet(listeSommet[trajet[i]]);
-
     }
     for (int j = int(trajet.size()) - 1; j > 0; j--)
     {
@@ -324,7 +322,8 @@ Graphe Graphe::extractionGraphe(Vehicule v, Sommet* depart)
             nouveau.ajouterArc(int(trajet.size()) - 1 - j, int(trajet.size()) - j, matriceAdj[trajet[j]][trajet[j - 1]]);
         }
     }
-
+    
+    cout << "Chemin le plus long de longeur " << trajet[0] << endl;
     return nouveau;
 
 }
@@ -391,8 +390,6 @@ void Graphe::plusCourtChemin(Sommet* depart, Sommet* arrivee, Vehicule *voiture)
         rep += banque[trajet.substr(i,2)];
 
     }
-    //int sansRecharge = nouveau.getMatrice()[nouveau.trouverSommet(trajet.substr(i, 1))->getIndice()][fin->getIndice()];
-    //voiture.rouler(sansRecharge);
 
     cout << depart->getId();
     for (int i = 0; i < int(rep.size()); i++)
