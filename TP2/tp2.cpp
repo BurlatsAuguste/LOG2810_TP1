@@ -2,11 +2,12 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include "noeud.hpp"
+#include "etat.hpp"
+#include "Machine.hpp"
 
 using namespace std;
 
-noeud *creerLexique(string filename)
+etat *creerLexique(string filename)
 {
     ifstream file(filename);
 
@@ -16,20 +17,20 @@ noeud *creerLexique(string filename)
         cout << "Impossible d'ouvrir le fichier en lecture" << endl;
         return NULL;
     }
-    noeud *racine = new noeud("");
+    etat *automate = new etat();
     string mot;
     getline(file, mot);
     while(mot != "")
     {
-        racine->ajouterMot(mot, -1);
+        automate->ajouterMot(mot, -1);
         getline(file, mot);
     } 
-    return racine;
+    return automate;
 }
 
-void afficherLexique(noeud *racine, string mot)
+void afficherLexique(etat *automate, string mot)
 {
-    vector<string> lexique = racine->getLexique(mot, -1);
+    vector<string> lexique = automate->getLexique(mot, -1);
     if(lexique.empty())
         cout << "mot introuvable";
     else
@@ -44,7 +45,7 @@ int main(int argc, char const *argv[])
     int choix_action;
     string filename;
     string recherche;
-    noeud *racine =NULL;
+    etat *automate =nullptr;
 
     while (true)
     {
@@ -61,30 +62,35 @@ int main(int argc, char const *argv[])
             switch(choix_action)
             {
                 case 1:
+                    if(automate)
+                        delete(automate);
                     cout << "Veuillez entrer le chemin vers le fichier" << endl;
                     cin >> filename;
-                    racine = creerLexique(filename);
+                    automate = creerLexique(filename);
                     break;
                 case 2:
-                    //à implanter
+                    if(!automate)
+                        cout << "Veuiller au préalable initialiser le jeu " <<endl;
+                    else
+                        cout << automate->choixAleatoire() << endl;
                     break;
                 case 3:
                     //à implanter
                     break;
                 case 4:
-                    if(!racine)
+                    if(!automate)
                         cout << "Veuiller au préalable initialiser le jeu " <<endl;
                     else
                     {
                         cout << "Veuillez entrer votre recherche" << endl;
                         cin >> recherche;
-                        afficherLexique(racine, recherche);
+                        afficherLexique(automate, recherche);
                     }
                     break;
                 case 5:
                     cout << "au revoir" << endl;
                     //suppression des pointeurs pour éviter les fuites de mémoire
-                    delete(racine);
+                    delete(automate);
                     exit(0);
                     break;
                 default:
