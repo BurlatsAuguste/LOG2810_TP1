@@ -1,19 +1,20 @@
 #include <string>
-#include "Machine.h"
+#include "Machine.hpp"
 
 using namespace std;
 
 
 Machine::Machine(string mot)
 {
-	length = mot.length();
+	size_t length = mot.length();
 	if (length > 0)
 	{
 		state* current = new state(mot.at(0));
 		state* prev = current;
+		state* actual;
 		for (size_t i = 1; i < length; i++)
 		{
-			state* actual = new state(mot.at(i));
+			actual = new state(mot.at(i));
 			prev->setNext(actual);
 			prev = actual;
 		}
@@ -30,7 +31,7 @@ int Machine::next(char let)
 
 int Machine::errors(string mot)
 {
-	if (mot.length() != length)
+	if (mot.length() != current->getLength())
 		return -1;
 	int ans = 0;
 	for (size_t i = 0; i < mot.length(); i++)

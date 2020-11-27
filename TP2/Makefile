@@ -1,10 +1,13 @@
 all:tp2
 
-tp2: tp2.o noeud.o
-	g++ -Wall tp2.o noeud.o -o tp2
+tp2: tp2.o etat.o Machine.o
+	g++ -Wall tp2.o etat.o -o tp2
 
-noeud.o: noeud.cpp noeud.hpp
-	g++ -Wall -c noeud.cpp -o noeud.o
+etat.o: etat.cpp etat.hpp
+	g++ -Wall -c etat.cpp -o etat.o
+
+Machine.o: Machine.cpp Machine.hpp
+	g++ -Wall -c Machine.cpp -o Machine.o
 
 tp2.o: tp2.cpp
 	g++ -Wall -c tp2.cpp -o tp2.o
